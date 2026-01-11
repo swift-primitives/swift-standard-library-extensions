@@ -18,7 +18,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-test-support-primitives"),
+        .package(path: "../swift-test-primitives"),
     ],
     targets: [
         .target(
@@ -28,7 +28,7 @@ let package = Package(
             name: "Standard Library Extensions Tests",
             dependencies: [
                 "Standard Library Extensions",
-                .product(name: "Test Support Primitives", package: "swift-test-support-primitives"),
+                .product(name: "Test Primitives", package: "swift-test-primitives"),
             ]
         ),
     ],
