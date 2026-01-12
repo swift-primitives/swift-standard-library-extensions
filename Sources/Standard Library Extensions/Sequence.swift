@@ -3,6 +3,8 @@
 //
 // Extensions for Swift standard library Sequence
 
+// MARK: - Count
+
 extension Sequence {
     /// Returns the number of elements that satisfy the predicate.
     ///
@@ -12,8 +14,16 @@ extension Sequence {
     /// [1, 2, 3, 4, 5].count(where: { $0.isMultiple(of: 2) })  // 2
     /// ["a", "bb", "ccc"].count(where: { $0.count > 1 })       // 2
     /// ```
-    public func count(where predicate: (Element) throws -> Bool) rethrows -> Int {
-        try reduce(0) { try predicate($1) ? $0 + 1 : $0 }
+    public func count<E: Error>(where predicate: (Element) throws(E) -> Bool) throws(E) -> Int {
+        // TODO: Replace with typed reduce once stdlib supports typed throws
+        // try reduce(0) { count, element in try predicate(element) ? count + 1 : count }
+        var count = 0
+        for element in self {
+            if try predicate(element) {
+                count += 1
+            }
+        }
+        return count
     }
 
 }
@@ -68,9 +78,9 @@ extension Sequence where Element: Comparable {
     /// [5, 4, 3, 2, 1].isSorted(by: >)  // true (descending)
     /// ["a", "bb", "ccc"].isSorted(by: { $0.count < $1.count })  // true
     /// ```
-    public func isSorted(
-        by areInIncreasingOrder: (Element, Element) throws -> Bool
-    ) rethrows -> Bool {
+    public func isSorted<E: Error>(
+        by areInIncreasingOrder: (Element, Element) throws(E) -> Bool
+    ) throws(E) -> Bool {
         var previous: Element?
 
         for element in self {

@@ -15,12 +15,16 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two"]
     /// dict.mapKeys { "key\($0)" }  // ["key1": "one", "key2": "two"]
     /// ```
-    public func mapKeys<NewKey: Hashable>(
-        _ transform: (Key) throws -> NewKey
-    ) rethrows -> [NewKey: Value] {
-        try reduce(into: [:]) { result, pair in
-            result[try transform(pair.key)] = pair.value
+    public func mapKeys<E: Error, NewKey: Hashable>(
+        _ transform: (Key) throws(E) -> NewKey
+    ) throws(E) -> [NewKey: Value] {
+        // TODO: Replace with typed reduce once stdlib supports typed throws
+        // try reduce(into: [:]) { result, pair in result[try transform(pair.key)] = pair.value }
+        var result: [NewKey: Value] = [:]
+        for (key, value) in self {
+            result[try transform(key)] = value
         }
+        return result
     }
 
     /// Returns a new dictionary by transforming keys and filtering out `nil` results.
@@ -34,14 +38,17 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two", 3: "three"]
     /// dict.compactMapKeys { $0 > 1 ? $0 : nil }  // [2: "two", 3: "three"]
     /// ```
-    public func compactMapKeys<NewKey: Hashable>(
-        _ transform: (Key) throws -> NewKey?
-    ) rethrows -> [NewKey: Value] {
-        try reduce(into: [:]) { result, pair in
-            if let newKey = try transform(pair.key) {
-                result[newKey] = pair.value
+    public func compactMapKeys<E: Error, NewKey: Hashable>(
+        _ transform: (Key) throws(E) -> NewKey?
+    ) throws(E) -> [NewKey: Value] {
+        // TODO: Replace with typed reduce once stdlib supports typed throws
+        var result: [NewKey: Value] = [:]
+        for (key, value) in self {
+            if let newKey = try transform(key) {
+                result[newKey] = value
             }
         }
+        return result
     }
 
     /// Compacts dictionary values, removing nil entries
