@@ -88,3 +88,75 @@ extension Collection {
         (self[startIndex..<index], self[index..<endIndex])
     }
 }
+
+extension BidirectionalCollection where Element: Hashable {
+    /// Trims elements from both ends of the collection that are in the given set.
+    ///
+    /// Returns a subsequence with leading and trailing elements removed if they
+    /// are contained in the specified set. This is a zero-copy operation.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let bytes: [UInt8] = [0x20, 0x48, 0x69, 0x20]  // " Hi "
+    /// let trimmed = bytes.trimming([0x20])  // [0x48, 0x69] ("Hi")
+    /// ```
+    ///
+    /// - Parameter elementsToTrim: Set of elements to remove from both ends
+    /// - Returns: A subsequence with the specified elements trimmed from both ends
+    @inlinable
+    public func trimming(_ elementsToTrim: Set<Element>) -> SubSequence {
+        var start = startIndex
+        var end = endIndex
+
+        // Trim leading
+        while start < end && elementsToTrim.contains(self[start]) {
+            start = index(after: start)
+        }
+
+        // Trim trailing
+        while start < end {
+            let beforeEnd = index(before: end)
+            guard elementsToTrim.contains(self[beforeEnd]) else { break }
+            end = beforeEnd
+        }
+
+        return self[start..<end]
+    }
+}
+
+extension BidirectionalCollection {
+    /// Trims elements from both ends of the collection that satisfy the predicate.
+    ///
+    /// Returns a subsequence with leading and trailing elements removed if they
+    /// satisfy the given predicate. This is a zero-copy operation.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let text = "  Hello  "
+    /// let trimmed = text.trimming { $0.isWhitespace }  // "Hello"
+    /// ```
+    ///
+    /// - Parameter predicate: A closure that returns `true` for elements to trim
+    /// - Returns: A subsequence with matching elements trimmed from both ends
+    @inlinable
+    public func trimming(where predicate: (Element) -> Bool) -> SubSequence {
+        var start = startIndex
+        var end = endIndex
+
+        // Trim leading
+        while start < end && predicate(self[start]) {
+            start = index(after: start)
+        }
+
+        // Trim trailing
+        while start < end {
+            let beforeEnd = index(before: end)
+            guard predicate(self[beforeEnd]) else { break }
+            end = beforeEnd
+        }
+
+        return self[start..<end]
+    }
+}
