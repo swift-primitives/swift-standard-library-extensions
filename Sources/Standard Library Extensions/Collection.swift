@@ -89,54 +89,76 @@ extension Collection {
     }
 }
 
-extension BidirectionalCollection where Element: Hashable {
+// MARK: - Collection Trimming (forward-only, O(n))
+
+extension Collection where Element: Hashable {
     /// Trims elements from both ends of the collection that are in the given set.
     ///
-    /// Returns a subsequence with leading and trailing elements removed if they
-    /// are contained in the specified set. This is a zero-copy operation.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let bytes: [UInt8] = [0x20, 0x48, 0x69, 0x20]  // " Hi "
-    /// let trimmed = bytes.trimming([0x20])  // [0x48, 0x69] ("Hi")
-    /// ```
+    /// Uses a single forward pass, tracking the last non-matching index.
+    /// For BidirectionalCollection, a more efficient two-ended version is used.
     ///
     /// - Parameter elementsToTrim: Set of elements to remove from both ends
     /// - Returns: A subsequence with the specified elements trimmed from both ends
     @inlinable
     public func trimming(_ elementsToTrim: Set<Element>) -> SubSequence {
+        trimming { elementsToTrim.contains($0) }
+    }
+}
+
+extension Collection {
+    /// Trims elements from both ends of the collection that satisfy the predicate.
+    ///
+    /// Uses a single forward pass, tracking the last non-matching index.
+    /// O(n) - must scan entire collection since we can't iterate backwards.
+    ///
+    /// - Parameter predicate: A closure that returns `true` for elements to trim
+    /// - Returns: A subsequence with matching elements trimmed from both ends
+    @inlinable
+    public func trimming(where predicate: (Element) -> Bool) -> SubSequence {
         var start = startIndex
-        var end = endIndex
+        var end = startIndex
+        var foundStart = false
+        var current = startIndex
 
-        // Trim leading
-        while start < end && elementsToTrim.contains(self[start]) {
-            start = index(after: start)
+        while current < endIndex {
+            if !predicate(self[current]) {
+                if !foundStart {
+                    start = current
+                    foundStart = true
+                }
+                end = index(after: current)
+            }
+            current = index(after: current)
         }
 
-        // Trim trailing
-        while start < end {
-            let beforeEnd = index(before: end)
-            guard elementsToTrim.contains(self[beforeEnd]) else { break }
-            end = beforeEnd
+        guard foundStart else {
+            return self[startIndex..<startIndex]
         }
-
         return self[start..<end]
+    }
+}
+
+// MARK: - BidirectionalCollection Trimming (two-ended, can short-circuit)
+
+extension BidirectionalCollection where Element: Hashable {
+    /// Trims elements from both ends of the collection that are in the given set.
+    ///
+    /// Optimized: iterates forward for leading, backward for trailing.
+    /// Can short-circuit without scanning entire collection.
+    ///
+    /// - Parameter elementsToTrim: Set of elements to remove from both ends
+    /// - Returns: A subsequence with the specified elements trimmed from both ends
+    @inlinable
+    public func trimming(_ elementsToTrim: Set<Element>) -> SubSequence {
+        trimming { elementsToTrim.contains($0) }
     }
 }
 
 extension BidirectionalCollection {
     /// Trims elements from both ends of the collection that satisfy the predicate.
     ///
-    /// Returns a subsequence with leading and trailing elements removed if they
-    /// satisfy the given predicate. This is a zero-copy operation.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let text = "  Hello  "
-    /// let trimmed = text.trimming { $0.isWhitespace }  // "Hello"
-    /// ```
+    /// Optimized: iterates forward for leading trim, backward for trailing trim.
+    /// Can short-circuit if content is in the middle without scanning entire collection.
     ///
     /// - Parameter predicate: A closure that returns `true` for elements to trim
     /// - Returns: A subsequence with matching elements trimmed from both ends
@@ -145,12 +167,12 @@ extension BidirectionalCollection {
         var start = startIndex
         var end = endIndex
 
-        // Trim leading
+        // Trim leading (forward)
         while start < end && predicate(self[start]) {
             start = index(after: start)
         }
 
-        // Trim trailing
+        // Trim trailing (backward)
         while start < end {
             let beforeEnd = index(before: end)
             guard predicate(self[beforeEnd]) else { break }
