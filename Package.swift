@@ -17,20 +17,19 @@ let package = Package(
             targets: ["Standard Library Extensions"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-test-primitives.git", from: "0.0.1"),
-    ],
     targets: [
         .target(
             name: "Standard Library Extensions"
         ),
-        .testTarget(
-            name: "Standard Library Extensions Tests",
-            dependencies: [
-                "Standard Library Extensions",
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-            ]
-        ),
+        // Tests are in a separate nested package (Tests/Package.swift)
+        // to break the circular dependency with swift-testing
     ],
     swiftLanguageModes: [.v6]
 )
+
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+    let settings: [SwiftSetting] = [
+        .strictMemorySafety(),
+    ]
+    target.swiftSettings = (target.swiftSettings ?? []) + settings
+}
