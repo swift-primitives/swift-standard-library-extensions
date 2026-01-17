@@ -87,6 +87,46 @@ extension Collection {
     public func split(at index: Index) -> (SubSequence, SubSequence) {
         (self[startIndex..<index], self[index..<endIndex])
     }
+
+    /// Calls the given closure with a pointer to the collection's contiguous storage if available, preserving typed errors.
+    ///
+    /// The standard library's `withContiguousStorageIfAvailable(_:)` erases error types through its
+    /// `rethrows` signature. This variant preserves the exact error type using `throws(E)`.
+    ///
+    /// Returns `nil` if contiguous storage is not available, otherwise returns the result of `body`.
+    /// If `body` throws, the error is propagated with its type preserved.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// enum ParseError: Error { case empty }
+    ///
+    /// let bytes: [UInt8] = [0x48, 0x65, 0x6c, 0x6c, 0x6f]
+    /// let result: UInt8? = try bytes.withContiguousStorageIfAvailable(body: { buffer in
+    ///     guard buffer.count > 0 else { throw ParseError.empty }
+    ///     return buffer[0]
+    /// })
+    /// // Error type ParseError is preserved
+    /// ```
+    ///
+    /// - Parameter body: A closure that receives an `UnsafeBufferPointer` to the collection's storage.
+    /// - Returns: The value returned by `body`, or `nil` if contiguous storage is not available.
+    /// - Throws: The typed error from `body`.
+    @inlinable
+    public func withContiguousStorageIfAvailable<T, E: Error>(
+        body: (UnsafeBufferPointer<Element>) throws(E) -> T
+    ) throws(E) -> T? {
+        var result: Result<T, E>?
+        _ = self.withContiguousStorageIfAvailable { buffer in
+            do throws(E) {
+                result = .success(try unsafe body(buffer))
+            } catch {
+                result = .failure(error)
+            }
+        }
+        guard let result else { return nil }
+        return try result.get()
+    }
 }
 
 // MARK: - Collection Trimming (forward-only, O(n))
