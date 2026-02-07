@@ -15,8 +15,10 @@ extension Sequence {
     /// ["a", "bb", "ccc"].count(where: { $0.count > 1 })       // 2
     /// ```
     public func count<E: Error>(where predicate: (Element) throws(E) -> Bool) throws(E) -> Int {
-        // TODO: Replace with typed reduce once stdlib supports typed throws
-        // try reduce(0) { count, element in try predicate(element) ? count + 1 : count }
+        // WORKAROUND: Manual loop instead of `reduce(_:_:)` with typed throws
+        // WHY: stdlib `reduce(_:_:)` does not support typed throws (`throws(E)`)
+        // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(_:_:)`
+        // TRACKING: https://github.com/swiftlang/swift/issues/68734
         var count = 0
         for element in self {
             if try predicate(element) {

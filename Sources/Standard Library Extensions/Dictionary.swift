@@ -18,8 +18,10 @@ extension Dictionary {
     public func mapKeys<E: Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey
     ) throws(E) -> [NewKey: Value] {
-        // TODO: Replace with typed reduce once stdlib supports typed throws
-        // try reduce(into: [:]) { result, pair in result[try transform(pair.key)] = pair.value }
+        // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
+        // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
+        // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`
+        // TRACKING: https://github.com/swiftlang/swift/issues/68734
         var result: [NewKey: Value] = [:]
         for (key, value) in self {
             result[try transform(key)] = value
@@ -41,7 +43,10 @@ extension Dictionary {
     public func compactMapKeys<E: Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey?
     ) throws(E) -> [NewKey: Value] {
-        // TODO: Replace with typed reduce once stdlib supports typed throws
+        // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
+        // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
+        // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`
+        // TRACKING: https://github.com/swiftlang/swift/issues/68734
         var result: [NewKey: Value] = [:]
         for (key, value) in self {
             if let newKey = try transform(key) {
