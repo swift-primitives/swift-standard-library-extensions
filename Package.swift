@@ -23,6 +23,12 @@ let package = Package(
         ),
         // Tests are in a separate nested package (Tests/Package.swift)
         // to break the circular dependency with swift-testing
+        .testTarget(
+            name: "Standard Library Extensions Tests",
+            dependencies: [
+                "Standard Library Extensions",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -33,6 +39,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
