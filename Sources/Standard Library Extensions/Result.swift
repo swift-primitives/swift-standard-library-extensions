@@ -1,9 +1,107 @@
 // Result.swift
-// swift-standards
+// swift-standard-library-extensions
 //
-// Extensions for Swift standard library Result
+// ~Copyable-aware Result type and extensions for Swift.Result
 
-extension Result {
+/// A result type that supports `~Copyable` success values.
+///
+/// Unlike `Swift.Result`, this type does not require `Success` to be `Copyable`,
+/// enabling use with noncopyable types like file handles and unique resources.
+///
+/// When `Success` conforms to `Copyable`, this type is implicitly `Copyable`.
+public enum Result<Success: ~Copyable, Failure: Error>: ~Copyable {
+    case success(Success)
+    case failure(Failure)
+}
+
+extension Result: Copyable where Success: Copyable {}
+extension Result: Sendable where Success: Sendable, Failure: Sendable {}
+
+// MARK: - Core API (mirrors Swift.Result)
+
+extension Result where Success: Copyable {
+    /// Returns the success value or throws the failure error.
+    @inlinable
+    public func get() throws(Failure) -> Success {
+        switch self {
+        case .success(let value): return value
+        case .failure(let error): throw error
+        }
+    }
+}
+
+extension Result where Success: ~Copyable {
+    /// Returns the success value or throws the failure error, consuming self.
+    @inlinable
+    public consuming func get() throws(Failure) -> Success {
+        switch consume self {
+        case .success(let value): return value
+        case .failure(let error): throw error
+        }
+    }
+}
+
+extension Result where Success: Copyable {
+    /// Transforms the success value using the given closure.
+    @inlinable
+    public func map<NewSuccess>(
+        _ transform: (Success) -> NewSuccess
+    ) -> Result<NewSuccess, Failure> {
+        switch self {
+        case .success(let value): .success(transform(value))
+        case .failure(let error): .failure(error)
+        }
+    }
+
+    /// Transforms the success value into a new Result.
+    @inlinable
+    public func flatMap<NewSuccess>(
+        _ transform: (Success) -> Result<NewSuccess, Failure>
+    ) -> Result<NewSuccess, Failure> {
+        switch self {
+        case .success(let value): transform(value)
+        case .failure(let error): .failure(error)
+        }
+    }
+
+    /// Transforms the failure error using the given closure.
+    @inlinable
+    public func mapError<NewFailure: Error>(
+        _ transform: (Failure) -> NewFailure
+    ) -> Result<Success, NewFailure> {
+        switch self {
+        case .success(let value): .success(value)
+        case .failure(let error): .failure(transform(error))
+        }
+    }
+
+    /// Transforms the failure error into a new Result.
+    @inlinable
+    public func flatMapError<NewFailure: Error>(
+        _ transform: (Failure) -> Result<Success, NewFailure>
+    ) -> Result<Success, NewFailure> {
+        switch self {
+        case .success(let value): .success(value)
+        case .failure(let error): transform(error)
+        }
+    }
+}
+
+extension Result where Success: Copyable, Failure == any Error {
+    /// Creates a result from a throwing closure.
+    @inlinable
+    public init(catching body: () throws -> Success) {
+        do {
+            self = .success(try body())
+        } catch {
+            self = .failure(error)
+        }
+    }
+}
+
+// MARK: - Swift.Result Extensions
+
+extension Swift.Result {
     /// The success value if the result is successful, otherwise `nil`.
     ///
     /// ## Example
@@ -52,8 +150,8 @@ extension Result {
     /// r1.zip(r3)  // .failure(MyError.failed)
     /// ```
     public func zip<OtherSuccess>(
-        _ other: Result<OtherSuccess, Failure>
-    ) -> Result<(Success, OtherSuccess), Failure> {
+        _ other: Swift.Result<OtherSuccess, Failure>
+    ) -> Swift.Result<(Success, OtherSuccess), Failure> {
         switch (self, other) {
         case (.success(let a), .success(let b)):
             return .success((a, b))
@@ -77,9 +175,9 @@ extension Result {
     /// r1.zip(r2, with: +)  // .success(5)
     /// ```
     public func zip<OtherSuccess, Combined>(
-        _ other: Result<OtherSuccess, Failure>,
+        _ other: Swift.Result<OtherSuccess, Failure>,
         with combine: (Success, OtherSuccess) -> Combined
-    ) -> Result<Combined, Failure> {
+    ) -> Swift.Result<Combined, Failure> {
         zip(other).map { combine($0.0, $0.1) }
     }
 }
