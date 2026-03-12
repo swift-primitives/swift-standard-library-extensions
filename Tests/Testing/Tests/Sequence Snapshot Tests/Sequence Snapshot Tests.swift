@@ -9,7 +9,7 @@ struct `Sequence - Snapshots` {
     func `max count from unsorted`() {
         let result = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3].max(count: 5)
 
-        #snapshot(
+        snapshot(
             result.map(String.init).joined(separator: "\n"),
             as: .lines
         ) {
@@ -27,7 +27,7 @@ struct `Sequence - Snapshots` {
     func `min count from unsorted`() {
         let result = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3].min(count: 5)
 
-        #snapshot(
+        snapshot(
             result.map(String.init).joined(separator: "\n"),
             as: .lines
         ) {
@@ -49,7 +49,7 @@ struct `Sequence - Snapshots` {
             .map { "\($0.key): \($0.value)" }
             .joined(separator: "\n")
 
-        #snapshot(result, as: .lines) {
+        snapshot(result, as: .lines) {
             """
             1: 2
             2: 3
