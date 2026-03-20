@@ -5,7 +5,7 @@
 
 // String trimming has been moved to swift-incits-4-1986
 
-extension String {
+extension String.Case {
     /// A case-insensitive string wrapper for use as dictionary keys and in comparisons.
     ///
     /// Provides case-insensitive hashing and equality checking, enabling case-insensitive lookups in dictionaries and sets.
@@ -14,11 +14,11 @@ extension String {
     /// ## Example
     ///
     /// ```swift
-    /// var headers: [String.CaseInsensitive: String] = [:]
+    /// var headers: [String.Case.Insensitive: String] = [:]
     /// headers["Content-Type".caseInsensitive] = "text/html"
     /// headers["content-type".caseInsensitive]  // "text/html"
     /// ```
-    public struct CaseInsensitive: Hashable, Comparable, Sendable {
+    public struct Insensitive: Hashable, Comparable, Sendable {
         public let value: String
 
         public init(_ value: some StringProtocol) {
@@ -37,10 +37,12 @@ extension String {
             lhs.value.lowercased() < rhs.value.lowercased()
         }
     }
+}
 
+extension String {
     /// A case-insensitive wrapper for the string.
-    public var caseInsensitive: CaseInsensitive {
-        CaseInsensitive(self)
+    public var caseInsensitive: Case.Insensitive {
+        Case.Insensitive(self)
     }
 }
 

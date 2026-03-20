@@ -3,12 +3,12 @@ import Testing
 @testable import Standard_Library_Extensions
 
 // Tests for non-ASCII string functionality that remains in swift-standards
-// (Percent encoding, CaseInsensitive, LineEnding, Base64, Hex encoding)
+// (Percent encoding, Case.Insensitive, LineEnding, Base64, Hex encoding)
 
-// MARK: - String.CaseInsensitive
+// MARK: - String.Case.Insensitive
 
 @Suite
-struct `String.CaseInsensitive - Equality` {
+struct `String.Case.Insensitive - Equality` {
 
     @Test
     func `Same strings are equal`() {
@@ -33,7 +33,7 @@ struct `String.CaseInsensitive - Equality` {
 }
 
 @Suite
-struct `String.CaseInsensitive - Hashing` {
+struct `String.Case.Insensitive - Hashing` {
 
     @Test
     func `Same case strings have same hash`() {
