@@ -1,4 +1,4 @@
-extension Swift.Result {
+extension Result where Success: Copyable {
     /// Namespace for Result builders.
     public enum Builder {
         /// A result builder that chains fallible operations, returning the first success.
@@ -21,14 +21,14 @@ extension Swift.Result {
             // MARK: - Expression Building
 
             @inlinable
-            public static func buildExpression(_ expression: Success) -> Swift.Result<Success, Failure> {
+            public static func buildExpression(_ expression: Success) -> Result<Success, Failure> {
                 .success(expression)
             }
 
             @inlinable
             public static func buildExpression(
-                _ expression: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                _ expression: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 expression
             }
 
@@ -36,31 +36,31 @@ extension Swift.Result {
 
             @inlinable
             public static func buildPartialBlock(
-                first: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                first: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 first
             }
 
             @inlinable
             public static func buildPartialBlock(
-                first: Swift.Result<Success, Failure>?
-            ) -> Swift.Result<Success, Failure>? {
+                first: Result<Success, Failure>?
+            ) -> Result<Success, Failure>? {
                 first
             }
 
             @inlinable
-            public static func buildPartialBlock(first: Void) -> Swift.Result<Success, Failure>? {
+            public static func buildPartialBlock(first: Void) -> Result<Success, Failure>? {
                 nil
             }
 
             @inlinable
-            public static func buildPartialBlock(first: Never) -> Swift.Result<Success, Failure> {}
+            public static func buildPartialBlock(first: Never) -> Result<Success, Failure> {}
 
             @inlinable
             public static func buildPartialBlock(
-                accumulated: Swift.Result<Success, Failure>,
-                next: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                accumulated: Result<Success, Failure>,
+                next: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 switch accumulated {
                 case .success:
                     accumulated
@@ -71,9 +71,9 @@ extension Swift.Result {
 
             @inlinable
             public static func buildPartialBlock(
-                accumulated: Swift.Result<Success, Failure>,
-                next: Swift.Result<Success, Failure>?
-            ) -> Swift.Result<Success, Failure> {
+                accumulated: Result<Success, Failure>,
+                next: Result<Success, Failure>?
+            ) -> Result<Success, Failure> {
                 switch accumulated {
                 case .success:
                     accumulated
@@ -86,30 +86,30 @@ extension Swift.Result {
 
             @inlinable
             public static func buildOptional(
-                _ component: Swift.Result<Success, Failure>?
-            ) -> Swift.Result<Success, Failure>? {
+                _ component: Result<Success, Failure>?
+            ) -> Result<Success, Failure>? {
                 component
             }
 
             @inlinable
             public static func buildEither(
-                first: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                first: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 first
             }
 
             @inlinable
             public static func buildEither(
-                second: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                second: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 second
             }
 
             @inlinable
             public static func buildArray(
-                _ components: [Swift.Result<Success, Failure>]
-            ) -> Swift.Result<Success, Failure>? {
-                var lastFailure: Swift.Result<Success, Failure>?
+                _ components: [Result<Success, Failure>]
+            ) -> Result<Success, Failure>? {
+                var lastFailure: Result<Success, Failure>?
                 for component in components {
                     switch component {
                     case .success:
@@ -123,8 +123,8 @@ extension Swift.Result {
 
             @inlinable
             public static func buildLimitedAvailability(
-                _ component: Swift.Result<Success, Failure>
-            ) -> Swift.Result<Success, Failure> {
+                _ component: Result<Success, Failure>
+            ) -> Result<Success, Failure> {
                 component
             }
         }
@@ -146,15 +146,15 @@ extension Swift.Result {
             // MARK: - Expression Building
 
             @inlinable
-            public static func buildExpression(_ expression: Success) -> Swift.Result<[Success], Failure>
+            public static func buildExpression(_ expression: Success) -> Result<[Success], Failure>
             {
                 .success([expression])
             }
 
             @inlinable
             public static func buildExpression(
-                _ expression: Swift.Result<Success, Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                _ expression: Result<Success, Failure>
+            ) -> Result<[Success], Failure> {
                 expression.map { [$0] }
             }
 
@@ -162,24 +162,24 @@ extension Swift.Result {
 
             @inlinable
             public static func buildPartialBlock(
-                first: Swift.Result<[Success], Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                first: Result<[Success], Failure>
+            ) -> Result<[Success], Failure> {
                 first
             }
 
             @inlinable
-            public static func buildPartialBlock(first: Void) -> Swift.Result<[Success], Failure> {
+            public static func buildPartialBlock(first: Void) -> Result<[Success], Failure> {
                 .success([])
             }
 
             @inlinable
-            public static func buildPartialBlock(first: Never) -> Swift.Result<[Success], Failure> {}
+            public static func buildPartialBlock(first: Never) -> Result<[Success], Failure> {}
 
             @inlinable
             public static func buildPartialBlock(
-                accumulated: Swift.Result<[Success], Failure>,
-                next: Swift.Result<[Success], Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                accumulated: Result<[Success], Failure>,
+                next: Result<[Success], Failure>
+            ) -> Result<[Success], Failure> {
                 switch (accumulated, next) {
                 case (.success(let accValues), .success(let nextValues)):
                     .success(accValues + nextValues)
@@ -193,7 +193,7 @@ extension Swift.Result {
             // MARK: - Block Building
 
             @inlinable
-            public static func buildBlock() -> Swift.Result<[Success], Failure> {
+            public static func buildBlock() -> Result<[Success], Failure> {
                 .success([])
             }
 
@@ -201,29 +201,29 @@ extension Swift.Result {
 
             @inlinable
             public static func buildOptional(
-                _ component: Swift.Result<[Success], Failure>?
-            ) -> Swift.Result<[Success], Failure> {
+                _ component: Result<[Success], Failure>?
+            ) -> Result<[Success], Failure> {
                 component ?? .success([])
             }
 
             @inlinable
             public static func buildEither(
-                first: Swift.Result<[Success], Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                first: Result<[Success], Failure>
+            ) -> Result<[Success], Failure> {
                 first
             }
 
             @inlinable
             public static func buildEither(
-                second: Swift.Result<[Success], Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                second: Result<[Success], Failure>
+            ) -> Result<[Success], Failure> {
                 second
             }
 
             @inlinable
             public static func buildArray(
-                _ components: [Swift.Result<[Success], Failure>]
-            ) -> Swift.Result<[Success], Failure> {
+                _ components: [Result<[Success], Failure>]
+            ) -> Result<[Success], Failure> {
                 var collected: [Success] = []
                 for component in components {
                     switch component {
@@ -238,8 +238,8 @@ extension Swift.Result {
 
             @inlinable
             public static func buildLimitedAvailability(
-                _ component: Swift.Result<[Success], Failure>
-            ) -> Swift.Result<[Success], Failure> {
+                _ component: Result<[Success], Failure>
+            ) -> Result<[Success], Failure> {
                 component
             }
         }
@@ -248,25 +248,25 @@ extension Swift.Result {
 
 // MARK: - Convenience Entry Points
 
-extension Swift.Result {
+extension Result where Success: Copyable {
     @inlinable
     public static func first(
-        @Builder.First _ builder: () -> Swift.Result<Success, Failure>
-    ) -> Swift.Result<Success, Failure> {
+        @Builder.First _ builder: () -> Result<Success, Failure>
+    ) -> Result<Success, Failure> {
         builder()
     }
 
     @inlinable
     public static func first(
-        @Builder.First _ builder: () -> Swift.Result<Success, Failure>?
-    ) -> Swift.Result<Success, Failure>? {
+        @Builder.First _ builder: () -> Result<Success, Failure>?
+    ) -> Result<Success, Failure>? {
         builder()
     }
 
     @inlinable
     public static func all(
-        @Builder.All _ builder: () -> Swift.Result<[Success], Failure>
-    ) -> Swift.Result<[Success], Failure> {
+        @Builder.All _ builder: () -> Result<[Success], Failure>
+    ) -> Result<[Success], Failure> {
         builder()
     }
 }
