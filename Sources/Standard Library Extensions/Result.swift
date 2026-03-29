@@ -124,10 +124,15 @@ extension Result where Success: Copyable {
     }
 }
 
-extension Result where Success: Copyable, Failure == any Error {
-    /// Creates a result from a throwing closure.
+extension Result where Success: Copyable {
+    /// Creates a result from a typed-throws closure.
+    ///
+    /// Unlike `init(catching:)` constrained to `Failure == any Error`, this
+    /// initializer preserves the concrete error type through typed throws.
+    /// Inside this initializer, `catch` binds `error` as `Failure` (typed),
+    /// not `any Error`.
     @inlinable
-    public init(catching body: () throws -> Success) {
+    public init(catching body: () throws(Failure) -> Success) {
         do {
             self = .success(try body())
         } catch {
