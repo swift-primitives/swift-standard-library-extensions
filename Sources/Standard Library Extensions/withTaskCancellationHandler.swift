@@ -16,8 +16,9 @@
 /// meaning neither the operation nor the cancellation check introduces an
 /// unnecessary executor hop. Uses typed throws rather than `rethrows`.
 @inlinable
+nonisolated(nonsending)
 public func withTaskCancellationHandler<T, E: Error>(
-    operation: () async throws(E) -> T,
+    operation: nonisolated(nonsending) () async throws(E) -> T,
     onCancel handler: @Sendable () -> Void
 ) async throws(E) -> T {
     do {
