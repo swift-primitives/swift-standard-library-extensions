@@ -18,6 +18,13 @@ actor Counter {
     }
 }
 
+/// A second actor that can observe a Counter.
+actor Observer {
+    func read(_ counter: Counter) async -> Int {
+        await counter.value()
+    }
+}
+
 // MARK: - Non-Sendable Fixtures
 
 final class Box {
@@ -30,10 +37,10 @@ actor Holder {
     func getStored() -> Box { stored }
 }
 
-// MARK: - Core Behavior
+// MARK: - Sync run
 
 @Suite
-struct `Actor - Extensions` {
+struct `Actor - run sync` {
 
     @Test
     func `Synchronous multi-step access`() async {
@@ -97,16 +104,61 @@ struct `Actor - Extensions` {
     }
 }
 
-// MARK: - Non-Sendable Returns via sending
+// MARK: - Async run
+
+@Suite
+struct `Actor - run async` {
+
+    @Test
+    func `Cross-actor call inside run`() async {
+        let counter = Counter()
+        let observer = Observer()
+
+        await counter.run { counter in
+            counter.increment()
+            counter.increment()
+
+            // await in body → async overload selected
+            let observed = await observer.read(counter)
+            #expect(observed == 2)
+        }
+    }
+
+    @Test
+    func `Returns value from async closure`() async {
+        let counter = Counter()
+        let observer = Observer()
+
+        let result = await counter.run { counter in
+            counter.increment()
+            return await observer.read(counter)
+        }
+
+        #expect(result == 1)
+    }
+
+    @Test
+    func `Propagates typed error from async closure`() async {
+        let counter = Counter()
+        let observer = Observer()
+
+        await #expect(throws: Counter.Failure.belowZero) {
+            try await counter.run { counter in
+                // Force async overload via cross-actor call
+                _ = await observer.read(counter)
+                try counter.decrement()
+            }
+        }
+    }
+}
+
+// MARK: - Sending return
 
 @Suite
 struct `Actor - sending return` {
 
     @Test
     func `Non-Sendable value constructed inline`() async {
-        // Box is non-Sendable, but constructed inside the closure
-        // without touching actor state — compiler can prove it is
-        // disconnected from the actor's region.
         let holder = Holder()
 
         let box = await holder.run { _ in
@@ -150,12 +202,4 @@ struct `Actor - sending return` {
     // The compiler correctly rejects returning values obtained from
     // actor-isolated methods, because it cannot prove they are
     // disconnected from the actor's state.
-    //
-    // Similarly:
-    //
-    //   await holder.run { holder in holder.makeFresh(99) }
-    //
-    // Also rejected — even though makeFresh creates a new Box, the
-    // compiler can't see through the method boundary to prove the
-    // return value is disconnected. This is conservative but sound.
 }
