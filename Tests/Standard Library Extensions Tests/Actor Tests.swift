@@ -37,6 +37,40 @@ actor Holder {
     func getStored() -> Box { stored }
 }
 
+// MARK: - ~Copyable Fixtures
+
+struct UniqueResource: ~Copyable, Sendable {
+    let id: Int
+    init(id: Int) { self.id = id }
+}
+
+struct Handle: ~Copyable {
+    let fd: Int32
+    init(fd: Int32) { self.fd = fd }
+}
+
+actor ResourceFactory {
+    private var counter = 0
+
+    func make() -> UniqueResource {
+        counter += 1
+        return UniqueResource(id: counter)
+    }
+
+    func open() -> Handle {
+        counter += 1
+        return Handle(fd: Int32(counter))
+    }
+
+    enum Failure: Error { case depleted }
+
+    func makeOrFail() throws(Failure) -> UniqueResource {
+        guard counter < 5 else { throw .depleted }
+        counter += 1
+        return UniqueResource(id: counter)
+    }
+}
+
 // MARK: - Sync run
 
 @Suite
@@ -202,4 +236,80 @@ struct `Actor - sending return` {
     // The compiler correctly rejects returning values obtained from
     // actor-isolated methods, because it cannot prove they are
     // disconnected from the actor's state.
+}
+
+// MARK: - ~Copyable return (sync)
+
+@Suite
+struct `Actor - noncopyable sync` {
+
+    @Test
+    func `Returns Sendable noncopyable resource`() async {
+        let factory = ResourceFactory()
+
+        let resource = await factory.run { factory in
+            factory.make()
+        }
+
+        #expect(resource.id == 1)
+    }
+
+    @Test
+    func `Returns non-Sendable noncopyable handle`() async {
+        let factory = ResourceFactory()
+
+        let handle = await factory.run { factory in
+            factory.open()
+        }
+
+        #expect(handle.fd == 1)
+    }
+
+    @Test
+    func `Typed throws with noncopyable return`() async {
+        let factory = ResourceFactory()
+
+        await #expect(throws: ResourceFactory.Failure.depleted) {
+            // Exhaust the factory
+            for _ in 0..<6 {
+                _ = try await factory.run { factory in
+                    try factory.makeOrFail()
+                }
+            }
+        }
+    }
+
+    @Test
+    func `Multi-step producing noncopyable result`() async {
+        let factory = ResourceFactory()
+
+        let resource = await factory.run { factory in
+            // Discard first two
+            _ = factory.make()
+            _ = factory.make()
+            // Keep third
+            return factory.make()
+        }
+
+        #expect(resource.id == 3)
+    }
+}
+
+// MARK: - ~Copyable return (async)
+
+@Suite
+struct `Actor - noncopyable async` {
+
+    @Test
+    func `Cross-actor call with noncopyable return`() async {
+        let factory = ResourceFactory()
+        let observer = Observer()
+
+        let resource = await factory.run { factory in
+            _ = await observer.read(Counter())
+            return factory.make()
+        }
+
+        #expect(resource.id == 1)
+    }
 }

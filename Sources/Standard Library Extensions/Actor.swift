@@ -8,23 +8,18 @@
 // multiple suspension points into a single hop for atomic multi-step
 // operations.
 //
-// Two overloads exist, disambiguated by the closure's async-ness:
+// Four overloads exist, resolved by two axes:
 //
-//   await actor.run { actor in           // sync — no await in body
-//       actor.a()
-//       actor.b()
-//   }
+//   Closure async-ness (sync vs async):
+//     Sync — no await in body. Zero interleaving (compile-time guarantee).
+//     Async — body contains await. On shared executor, no actual suspension.
 //
-//   await actor.run { actor in           // async — body contains await
-//       actor.a()
-//       await otherActor.b()
-//   }
-//
-// The sync variant guarantees zero interleaving (compile-time).
-// The async variant permits cross-actor calls; on a shared executor
-// these resolve without suspension (runtime guarantee only).
+//   Return copyability (Copyable vs ~Copyable):
+//     Compiler selects ~Copyable overload when R doesn't conform to Copyable.
 //
 // See: Point-Free #362 "Isolation: Actor Enqueuing"
+
+// MARK: - Copyable return
 
 extension Actor {
     /// Executes a synchronous closure with exclusive access to this actor.
@@ -82,6 +77,33 @@ extension Actor {
     /// - Returns: The value returned by `body`.
     @inlinable
     public func run<R, Failure: Error>(
+        _ body: @Sendable (isolated Self) async throws(Failure) -> sending R
+    ) async throws(Failure) -> sending R {
+        try await body(self)
+    }
+}
+
+// MARK: - ~Copyable return
+
+extension Actor {
+    /// Executes a synchronous closure returning a `~Copyable` value.
+    ///
+    /// Identical to the `Copyable` overload but accepts non-copyable return
+    /// types such as file handles, unique resources, or `~Copyable` bundles.
+    /// The compiler selects this overload when `R` does not conform to `Copyable`.
+    @inlinable
+    public func run<R: ~Copyable, Failure: Error>(
+        _ body: @Sendable (isolated Self) throws(Failure) -> sending R
+    ) throws(Failure) -> sending R {
+        try body(self)
+    }
+
+    /// Executes an asynchronous closure returning a `~Copyable` value.
+    ///
+    /// Combines the async `run` semantics (cross-actor calls, shared executor
+    /// transactions) with `~Copyable` return support.
+    @inlinable
+    public func run<R: ~Copyable, Failure: Error>(
         _ body: @Sendable (isolated Self) async throws(Failure) -> sending R
     ) async throws(Failure) -> sending R {
         try await body(self)
