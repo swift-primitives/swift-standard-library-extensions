@@ -23,14 +23,21 @@ extension StringProtocol {
 
 // MARK: - String Search Operations
 
-extension StringProtocol {
-    /// Finds the range of the first occurrence of a given string
+extension StringProtocol where UTF8View.Index == Index {
+    /// Finds the range of the first occurrence of a given string.
     ///
-    /// Foundation-free implementation for finding substrings.
-    /// Works with both String and Substring for zero-copy operations.
+    /// Byte-literal scan over the UTF-8 view. Canonical equivalence is **not**
+    /// applied: `"é" (U+00E9)` will not match `"é" (U+0065 U+0301)`.
+    /// Normalize inputs (e.g., to NFC) if grapheme-cluster equivalence is
+    /// required.
     ///
-    /// - Parameter string: The string to search for
-    /// - Returns: Range of the first occurrence, or nil if not found
+    /// UTF-8 is self-synchronizing, so every byte-level match begins and ends
+    /// on a Unicode scalar boundary; the returned range is a valid index range
+    /// on `self`. Works with both `String` and `Substring` for zero-copy
+    /// operations.
+    ///
+    /// - Parameter string: The string to search for.
+    /// - Returns: Range of the first occurrence, or `nil` if not found.
     ///
     /// Example:
     /// ```swift
@@ -43,34 +50,26 @@ extension StringProtocol {
     /// ```
     public func range(of string: some StringProtocol) -> Range<Index>? {
         guard !string.isEmpty else { return startIndex..<startIndex }
-        guard string.count <= count else { return nil }
 
-        let searchChars = Array(string)
+        let needle = string.utf8
+        let needleCount = needle.count
+        let haystackCount = utf8.count
+        guard needleCount <= haystackCount else { return nil }
 
-        var searchIndex = startIndex
-        while searchIndex < endIndex {
-            let remainingDistance = distance(from: searchIndex, to: endIndex)
-            guard remainingDistance >= string.count else { break }
+        let lastStart = utf8.index(utf8.startIndex, offsetBy: haystackCount - needleCount)
+        var start = utf8.startIndex
 
-            var matchIndex = searchIndex
-            var patternIndex = searchChars.startIndex
-
-            // Try to match the pattern starting at searchIndex
-            while patternIndex < searchChars.endIndex {
-                if self[matchIndex] != searchChars[patternIndex] {
-                    break
-                }
-                matchIndex = index(after: matchIndex)
-                patternIndex = searchChars.index(after: patternIndex)
+        while start <= lastStart {
+            var h = start
+            var n = needle.startIndex
+            while n < needle.endIndex, utf8[h] == needle[n] {
+                h = utf8.index(after: h)
+                n = needle.index(after: n)
             }
-
-            // If we matched the entire pattern, return the range
-            if patternIndex == searchChars.endIndex {
-                let endIndex = index(searchIndex, offsetBy: string.count)
-                return searchIndex..<endIndex
+            if n == needle.endIndex {
+                return start..<h
             }
-
-            searchIndex = index(after: searchIndex)
+            start = utf8.index(after: start)
         }
 
         return nil

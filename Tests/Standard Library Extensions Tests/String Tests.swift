@@ -261,3 +261,86 @@ struct `StringProtocol.range(of:) - Case Sensitivity` {
         #expect("TEST".range(of: "TEST") != nil)
     }
 }
+
+@Suite
+struct `StringProtocol.range(of:) - Backtracking` {
+
+    @Test
+    func `Partial prefix match requires backtrack`() {
+        // "aab" appears at offset 1; naive scan must not commit after matching
+        // the first two 'a's at offset 0.
+        let haystack = "aaab"
+        let result = haystack.range(of: "aab")
+        #expect(result != nil)
+        if let range = result {
+            #expect(haystack[range] == "aab")
+            #expect(haystack.distance(from: haystack.startIndex, to: range.lowerBound) == 1)
+        }
+    }
+
+    @Test
+    func `Overlapping prefix returns first full match`() {
+        // "abab" in "ababab": first full match starts at offset 0.
+        let haystack = "ababab"
+        let result = haystack.range(of: "abab")
+        #expect(result != nil)
+        if let range = result {
+            #expect(haystack[range] == "abab")
+            #expect(range.lowerBound == haystack.startIndex)
+        }
+    }
+
+    @Test
+    func `ASCII pattern inside Unicode haystack`() {
+        let haystack = "prefix 🌍 warning: foo"
+        let result = haystack.range(of: "warning: ")
+        #expect(result != nil)
+        if let range = result {
+            #expect(haystack[range] == "warning: ")
+        }
+    }
+}
+
+@Suite
+struct `StringProtocol.range(of:) - Byte-Literal Semantics` {
+
+    @Test
+    func `Precomposed does not match decomposed`() {
+        // "café" with precomposed é (U+00E9) vs "cafe" + combining acute
+        // (U+0065 U+0301). These are canonically equivalent under Unicode
+        // normalization, but range(of:) matches bytes, not graphemes.
+        let precomposed = "caf\u{00E9}"
+        let decomposed  = "cafe\u{0301}"
+
+        #expect(precomposed.range(of: decomposed) == nil)
+        #expect(decomposed.range(of: precomposed) == nil)
+
+        // Self-matches still succeed: bytes are byte-equal to themselves.
+        #expect(precomposed.range(of: precomposed) != nil)
+        #expect(decomposed.range(of: decomposed) != nil)
+    }
+}
+
+@Suite
+struct `StringProtocol.range(of:) - Multi-Byte UTF-8 Widths` {
+
+    @Test
+    func `Find two-byte UTF-8 scalar`() {
+        let haystack = "café"
+        let result = haystack.range(of: "é")
+        #expect(result != nil)
+        if let range = result {
+            #expect(haystack[range] == "é")
+        }
+    }
+
+    @Test
+    func `Find three-byte UTF-8 scalar`() {
+        let haystack = "hello 世界"
+        let result = haystack.range(of: "世")
+        #expect(result != nil)
+        if let range = result {
+            #expect(haystack[range] == "世")
+        }
+    }
+}
