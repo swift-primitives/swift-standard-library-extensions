@@ -16,6 +16,7 @@ extension Collection {
     /// array[safe: 1]   // 2
     /// array[safe: 10]  // nil
     /// ```
+    @inlinable
     public subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
     }
@@ -32,6 +33,7 @@ extension Collection {
     /// array[safe: 1..<3]   // [2, 3]
     /// array[safe: 3..<10]  // nil
     /// ```
+    @inlinable
     public subscript(safe range: Range<Index>) -> SubSequence? {
         guard range.lowerBound >= startIndex,
             range.upperBound <= endIndex,
@@ -51,6 +53,7 @@ extension Collection {
     /// [1, 2, 3, 4, 5].chunked(into: 2)  // [[1, 2], [3, 4], [5]]
     /// [1, 2, 3].chunked(into: 5)        // [[1, 2, 3]]
     /// ```
+    @inlinable
     public func chunked(into size: Int) -> [[Element]] {
         guard size > 0 else { return [] }
         var chunks: [[Element]] = []
@@ -84,6 +87,7 @@ extension Collection {
     /// let (prefix, suffix) = [1, 2, 3, 4, 5].split(at: 2)
     /// // prefix: [1, 2], suffix: [3, 4, 5]
     /// ```
+    @inlinable
     public func split(at index: Index) -> (SubSequence, SubSequence) {
         (self[startIndex..<index], self[index..<endIndex])
     }

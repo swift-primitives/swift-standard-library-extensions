@@ -14,6 +14,7 @@ extension Sequence {
     /// [1, 2, 3, 4, 5].count(where: { $0.isMultiple(of: 2) })  // 2
     /// ["a", "bb", "ccc"].count(where: { $0.count > 1 })       // 2
     /// ```
+    @inlinable
     public func count<E: Error>(where predicate: (Element) throws(E) -> Bool) throws(E) -> Int {
         // WORKAROUND: Manual loop instead of `reduce(_:_:)` with typed throws
         // WHY: stdlib `reduce(_:_:)` does not support typed throws (`throws(E)`)
@@ -42,6 +43,7 @@ extension Sequence where Element: Hashable {
     /// [1, 2, 2, 3, 1, 4, 2].frequencies()  // [1: 2, 2: 3, 3: 1, 4: 1]
     /// "hello".frequencies()                // ["h": 1, "e": 1, "l": 2, "o": 1]
     /// ```
+    @inlinable
     public func frequencies() -> [Element: Int] {
         reduce(into: [:]) { counts, element in
             counts[element, default: 0] += 1
@@ -59,6 +61,7 @@ extension Sequence where Element: Comparable {
     /// [1, 3, 2, 4, 5].isSorted()     // false
     /// [5, 4, 3, 2, 1].isSorted()     // false
     /// ```
+    @inlinable
     public func isSorted() -> Bool {
         var previous: Element?
 
@@ -80,6 +83,7 @@ extension Sequence where Element: Comparable {
     /// [5, 4, 3, 2, 1].isSorted(by: >)  // true (descending)
     /// ["a", "bb", "ccc"].isSorted(by: { $0.count < $1.count })  // true
     /// ```
+    @inlinable
     public func isSorted<E: Error>(
         by areInIncreasingOrder: (Element, Element) throws(E) -> Bool
     ) throws(E) -> Bool {
@@ -103,6 +107,7 @@ extension Sequence where Element: Comparable {
     /// [3, 1, 4, 1, 5, 9, 2].max(count: 3)  // [9, 5, 4]
     /// [1, 2, 3].max(count: 5)              // [3, 2, 1]
     /// ```
+    @inlinable
     public func max(count: Int) -> [Element] {
         guard count > 0 else { return [] }
         var result: [Element] = []
@@ -128,6 +133,7 @@ extension Sequence where Element: Comparable {
     /// [3, 1, 4, 1, 5, 9, 2].min(count: 3)  // [1, 1, 2]
     /// [1, 2, 3].min(count: 5)              // [1, 2, 3]
     /// ```
+    @inlinable
     public func min(count: Int) -> [Element] {
         guard count > 0 else { return [] }
         var result: [Element] = []

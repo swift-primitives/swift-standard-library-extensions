@@ -13,6 +13,7 @@ extension Sequence where Element: Numeric {
     /// [2, 3, 4].product()        // 24
     /// [].product()               // 1
     /// ```
+    @inlinable
     public func product() -> Element {
         reduce(1, *)
     }
@@ -28,6 +29,7 @@ extension Sequence where Element: BinaryInteger {
     /// [10, 20, 30].mean()     // 20
     /// [].mean()               // nil
     /// ```
+    @inlinable
     public func mean() -> Element? {
         let elements = Array(self)
         guard !elements.isEmpty else { return nil }
@@ -45,6 +47,7 @@ extension Sequence where Element: BinaryFloatingPoint {
     /// [10.5, 20.5, 30.5].mean()         // 20.5
     /// [].mean()                         // nil
     /// ```
+    @inlinable
     public func mean() -> Element? {
         var sum: Element = 0
         var count: Element = 0

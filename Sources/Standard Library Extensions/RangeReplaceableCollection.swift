@@ -15,6 +15,7 @@ extension RangeReplaceableCollection {
     /// [2, 3, 4].prepending(1)  // [1, 2, 3, 4]
     /// "ello".prepending("h")   // "hello"
     /// ```
+    @inlinable
     public func prepending(_ element: Element) -> Self {
         var result = self
         result.insert(element, at: startIndex)
@@ -34,6 +35,7 @@ extension RangeReplaceableCollection where Element: Hashable {
     /// [1, 2, 2, 3, 1, 4].removingDuplicates()  // [1, 2, 3, 4]
     /// "hello".removingDuplicates()             // "helo"
     /// ```
+    @inlinable
     public func removingDuplicates() -> Self {
         var seen: Set<Element> = []
         return filter { seen.insert($0).inserted }

@@ -4,22 +4,10 @@
 // Pure Swift StringProtocol utilities
 
 // MARK: - Case Formatting
-
-extension StringProtocol {
-    /// Formats the string using the specified case transformation
-    /// - Parameter case: The case format to apply
-    /// - Returns: Formatted string
-    ///
-    /// Example:
-    /// ```swift
-    /// "hello world".formatted(as: .upper)  // "HELLO WORLD"
-    /// "hello world".formatted(as: .title)  // "Hello World"
-    /// let sub = "hello world"[...]; sub.formatted(as: .upper)  // Works on Substring too
-    /// ```
-    public func formatted(as case: String.Case) -> String {
-        `case`.transform(String(self))
-    }
-}
+//
+// String.Case, formatted(as:), and related case-formatting APIs have been
+// moved to swift-format-primitives (as Format.Case, formatted(_:)). See
+// swift-format-primitives/Research/case-formatting-placement.md.
 
 // MARK: - String Search Operations
 
@@ -48,6 +36,7 @@ extension StringProtocol where UTF8View.Index == Index {
     /// let sub = "Hello World"[...]
     /// sub.range(of: "World")            // Range in Substring
     /// ```
+    @inlinable
     public func range(of string: some StringProtocol) -> Range<Index>? {
         guard !string.isEmpty else { return startIndex..<startIndex }
 
@@ -94,6 +83,7 @@ extension StringProtocol {
     /// String.trimming("  hello  ", where: { $0.isWhitespace })  // "hello"
     /// String.trimming("123hello456", where: \.isNumber)         // "hello"
     /// ```
+    @inlinable
     public static func trimming(
         _ string: Self,
         where predicate: (Character) -> Bool
@@ -127,6 +117,7 @@ extension StringProtocol {
     /// ```swift
     /// String.trimming("  hello  ", of: [" "])  // "hello"
     /// ```
+    @inlinable
     public static func trimming(
         _ string: Self,
         of characterSet: Set<Character>
@@ -146,6 +137,7 @@ extension StringProtocol {
     /// "  hello  ".trimming(where: { $0.isWhitespace })  // "hello"
     /// "123hello456".trimming(where: \.isNumber)         // "hello"
     /// ```
+    @inlinable
     public func trimming(where predicate: (Character) -> Bool) -> SubSequence {
         Self.trimming(self, where: predicate)
     }
@@ -163,11 +155,13 @@ extension StringProtocol {
     /// "\t\nhello\n\t".trimming(["\t", "\n"]) // "hello"
     /// "🎉hello🎉".trimming(["🎉"])          // "hello"
     /// ```
+    @inlinable
     @_disfavoredOverload
     public func trimming(_ characterSet: Set<Character>) -> SubSequence {
         Self.trimming(self, of: characterSet)
     }
 
+    @inlinable
     public func trimming(_ characterSet: Set<Character>) -> String {
         String(Self.trimming(self, of: characterSet))
     }

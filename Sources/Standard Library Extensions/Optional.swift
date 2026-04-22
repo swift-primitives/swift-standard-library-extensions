@@ -16,6 +16,7 @@ extension Optional {
     /// let value = try maybeValue.unwrap(or: MyError.notFound)
     /// // Throws MyError.notFound
     /// ```
+    @inlinable
     public func unwrap<E: Error>(or error: E) throws(E) -> Wrapped {
         guard let value = self else { throw error }
         return value
@@ -36,6 +37,7 @@ extension Optional {
     /// let noValue: Int? = nil
     /// noValue.apply(fn)  // nil
     /// ```
+    @inlinable
     public func apply<Result>(_ transform: ((Wrapped) -> Result)?) -> Result? {
         guard let transform = transform, let value = self else { return nil }
         return transform(value)
@@ -56,6 +58,7 @@ extension Optional {
     /// let c: Int? = nil
     /// c.zip(b)  // nil
     /// ```
+    @inlinable
     public func zip<Other>(_ other: Other?) -> (Wrapped, Other)? {
         guard let value = self, let otherValue = other else { return nil }
         return (value, otherValue)

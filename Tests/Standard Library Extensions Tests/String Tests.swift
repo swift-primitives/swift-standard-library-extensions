@@ -2,58 +2,13 @@ import Testing
 
 @testable import Standard_Library_Extensions
 
-// Tests for non-ASCII string functionality that remains in swift-standards
-// (Percent encoding, Case.Insensitive, LineEnding, Base64, Hex encoding)
-
-// MARK: - String.Case.Insensitive
-
-@Suite
-struct `String.Case.Insensitive - Equality` {
-
-    @Test
-    func `Same strings are equal`() {
-        let a = "hello".caseInsensitive
-        let b = "hello".caseInsensitive
-        #expect(a == b)
-    }
-
-    @Test
-    func `Different case strings are equal`() {
-        let a = "hello".caseInsensitive
-        let b = "HELLO".caseInsensitive
-        #expect(a == b)
-    }
-
-    @Test
-    func `Mixed case strings are equal`() {
-        let a = "HeLLo".caseInsensitive
-        let b = "hEllO".caseInsensitive
-        #expect(a == b)
-    }
-}
-
-@Suite
-struct `String.Case.Insensitive - Hashing` {
-
-    @Test
-    func `Same case strings have same hash`() {
-        let a = "hello".caseInsensitive
-        let b = "hello".caseInsensitive
-        #expect(a.hashValue == b.hashValue)
-    }
-
-    @Test
-    func `Different case strings have same hash`() {
-        let a = "hello".caseInsensitive
-        let b = "HELLO".caseInsensitive
-        #expect(a.hashValue == b.hashValue)
-    }
-}
-
-// String.ASCII.LineEnding tests have been moved to swift-incits-4-1986
-// Percent encoding tests have been moved to swift-rfc-3986
-// Hex encoding tests have been moved to swift-rfc-4648
-// Base64 encoding tests have been moved to swift-rfc-4648
+// Tests for StringProtocol utilities that remain in swift-standard-library-extensions.
+// Case-formatting tests (String.Case.Insensitive, String.caseInsensitive, formatted(as:))
+// have been moved to swift-format-primitives/Tests/Format Primitives Tests/.
+// String.ASCII.LineEnding tests have been moved to swift-incits-4-1986.
+// Percent encoding tests have been moved to swift-rfc-3986.
+// Hex encoding tests have been moved to swift-rfc-4648.
+// Base64 encoding tests have been moved to swift-rfc-4648.
 
 // MARK: - StringProtocol.range(of:)
 

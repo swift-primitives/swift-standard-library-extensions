@@ -17,6 +17,7 @@ extension ClosedRange where Bound: Strideable {
     /// let d = 5...7
     /// c.overlap(d)  // nil
     /// ```
+    @inlinable
     public func overlap(_ other: ClosedRange<Bound>) -> ClosedRange<Bound>? {
         let lower = Swift.max(lowerBound, other.lowerBound)
         let upper = Swift.min(upperBound, other.upperBound)
@@ -35,6 +36,7 @@ extension ClosedRange where Bound: Strideable {
     /// range.clamped(to: 5...15)  // 5...10
     /// range.clamped(to: 20...30) // nil
     /// ```
+    @inlinable
     public func clamped(to bounds: ClosedRange<Bound>) -> ClosedRange<Bound>? {
         overlap(bounds)
     }

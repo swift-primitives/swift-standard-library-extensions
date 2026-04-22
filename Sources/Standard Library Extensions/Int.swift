@@ -12,6 +12,7 @@ extension Int {
     /// Int(true)   // 1
     /// Int(false)  // 0
     /// ```
+    @inlinable
     public init(_ bool: Bool) {
         self = bool ? 1 : 0
     }

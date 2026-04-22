@@ -90,18 +90,21 @@ extension Result where Success: Copyable {
     }
 
     /// The success value if the result is successful, otherwise `nil`.
+    @inlinable
     public var success: Success? {
         guard case .success(let value) = self else { return nil }
         return value
     }
 
     /// The failure error if the result is a failure, otherwise `nil`.
+    @inlinable
     public var failure: Failure? {
         guard case .failure(let error) = self else { return nil }
         return error
     }
 
     /// Combines two results into a single result containing a tuple of both successes.
+    @inlinable
     public func zip<OtherSuccess>(
         _ other: Result<OtherSuccess, Failure>
     ) -> Result<(Success, OtherSuccess), Failure> {
@@ -116,6 +119,7 @@ extension Result where Success: Copyable {
     }
 
     /// Combines two results by applying a transformation to both success values.
+    @inlinable
     public func zip<OtherSuccess, Combined>(
         _ other: Result<OtherSuccess, Failure>,
         with combine: (Success, OtherSuccess) -> Combined

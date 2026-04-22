@@ -17,6 +17,7 @@ extension FloatingPoint {
     /// a.isApproximatelyEqual(to: b, tolerance: 0.0001)  // true
     /// a == b  // false
     /// ```
+    @inlinable
     public func isApproximatelyEqual(to other: Self, tolerance: Self) -> Bool {
         abs(self - other) <= tolerance
     }
@@ -34,6 +35,7 @@ extension FloatingPoint {
     /// a.lerp(to: b, t: 0.5)  // 5.0
     /// a.lerp(to: b, t: 0.25) // 2.5
     /// ```
+    @inlinable
     public func lerp(to other: Self, t: Self) -> Self {
         self + t * (other - self)
     }
@@ -78,6 +80,7 @@ extension FloatingPoint {
     /// pi.rounded(to: 2)  // 3.14
     /// pi.rounded(to: 4)  // 3.1416
     /// ```
+    @inlinable
     public func rounded(to places: Int) -> Self {
         guard places >= 0 else { return self }
         let divisor = Self(10).power(places)

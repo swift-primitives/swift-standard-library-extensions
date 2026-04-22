@@ -17,6 +17,7 @@ extension Array {
     /// // result == [1, 2, 4, 5]
     /// // numbers == [1, 2, 3, 4, 5]
     /// ```
+    @inlinable
     public func removing(at index: Int) -> [Element] {
         var result = self
         result.remove(at: index)
@@ -36,6 +37,7 @@ extension Array {
     /// // result == [1, 2, 3, 4, 5]
     /// // numbers == [1, 2, 4, 5]
     /// ```
+    @inlinable
     public func inserting(_ element: Element, at index: Int) -> [Element] {
         var result = self
         result.insert(element, at: index)
@@ -55,6 +57,7 @@ extension Array {
     /// numbers[safe: 3..<10]  // nil
     /// numbers[safe: -1..<2]  // nil
     /// ```
+    @inlinable
     public subscript(safe range: Range<Int>) -> ArraySlice<Element>? {
         guard range.lowerBound >= 0,
             range.upperBound <= count,
@@ -76,6 +79,7 @@ extension Array {
     /// numbers[safe: 3...10]  // nil
     /// numbers[safe: -1...2]  // nil
     /// ```
+    @inlinable
     public subscript(safe range: ClosedRange<Int>) -> ArraySlice<Element>? {
         guard range.lowerBound >= 0,
             range.upperBound < count,

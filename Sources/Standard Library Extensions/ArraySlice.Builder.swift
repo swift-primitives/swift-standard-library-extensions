@@ -1,19 +1,7 @@
-extension Array {
-    /// A result builder for declaratively constructing arrays.
-    ///
-    /// ```swift
-    /// let array = Array {
-    ///     1
-    ///     2
-    ///     if condition {
-    ///         3
-    ///     }
-    /// }
-    /// ```
+extension ArraySlice {
+    /// A result builder for declaratively constructing array slices.
     @resultBuilder
     public enum Builder {
-        // MARK: - Expression Building
-
         @inlinable
         public static func buildExpression(_ expression: Element) -> [Element] {
             [expression]
@@ -25,11 +13,14 @@ extension Array {
         }
 
         @inlinable
+        public static func buildExpression(_ expression: ArraySlice<Element>) -> [Element] {
+            Array(expression)
+        }
+
+        @inlinable
         public static func buildExpression(_ expression: Element?) -> [Element] {
             expression.map { [$0] } ?? []
         }
-
-        // MARK: - Partial Block Building
 
         @inlinable
         public static func buildPartialBlock(first: [Element]) -> [Element] {
@@ -49,14 +40,10 @@ extension Array {
             accumulated + next
         }
 
-        // MARK: - Block Building
-
         @inlinable
         public static func buildBlock() -> [Element] {
             []
         }
-
-        // MARK: - Control Flow
 
         @inlinable
         public static func buildOptional(_ component: [Element]?) -> [Element] {
@@ -82,12 +69,17 @@ extension Array {
         public static func buildLimitedAvailability(_ component: [Element]) -> [Element] {
             component
         }
+
+        @inlinable
+        public static func buildFinalResult(_ component: [Element]) -> ArraySlice<Element> {
+            ArraySlice(component)
+        }
     }
 }
 
-extension Array {
+extension ArraySlice {
     @inlinable
-    public init(@Array.Builder _ builder: () -> [Element]) {
+    public init(@ArraySlice.Builder _ builder: () -> ArraySlice<Element>) {
         self = builder()
     }
 }

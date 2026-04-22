@@ -7,11 +7,15 @@
 
 extension Set<String> {
     
+    @inlinable
     public static var swift: `Swift` {
         .init()
     }
     
     public struct `Swift` {
+        @usableFromInline
+        internal init() {}
+
         /// Swift keywords that need to be escaped with backticks when used as identifiers
         public static let keywords: Set<String> = [
             "as", "break", "case", "catch", "class", "continue", "default", "defer",
@@ -22,6 +26,7 @@ extension Set<String> {
             "throw", "throws", "true", "try", "typealias", "var", "where", "while",
         ]
         
+        @inlinable
         public func escape(_ identifier: String) -> String {
             Set<String>.Swift.keywords.contains(identifier) ? "`\(identifier)`" : identifier
         }

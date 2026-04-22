@@ -12,6 +12,7 @@ extension Double {
     /// 3.14159.rounded(to: 2)  // 3.14
     /// 2.71828.rounded(to: 3)  // 2.718
     /// ```
+    @inlinable
     public func rounded(to places: Int) -> Double {
         guard places >= 0 else { return self }
         var divisor: Double = 1.0

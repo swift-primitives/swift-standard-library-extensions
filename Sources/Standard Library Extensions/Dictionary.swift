@@ -15,6 +15,7 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two"]
     /// dict.mapKeys { "key\($0)" }  // ["key1": "one", "key2": "two"]
     /// ```
+    @inlinable
     public func mapKeys<E: Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey
     ) throws(E) -> [NewKey: Value] {
@@ -40,6 +41,7 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two", 3: "three"]
     /// dict.compactMapKeys { $0 > 1 ? $0 : nil }  // [2: "two", 3: "three"]
     /// ```
+    @inlinable
     public func compactMapKeys<E: Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey?
     ) throws(E) -> [NewKey: Value] {
@@ -85,6 +87,7 @@ extension Dictionary where Value: Equatable {
     /// let dict = ["a": 1, "b": 2]
     /// dict.inverted()  // [1: "a", 2: "b"]
     /// ```
+    @inlinable
     public func inverted() -> [Value: Key] where Value: Hashable {
         reduce(into: [:]) { result, pair in
             result[pair.value] = pair.key
