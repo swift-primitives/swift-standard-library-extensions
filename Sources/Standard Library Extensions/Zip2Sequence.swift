@@ -1,5 +1,5 @@
 // Zip2Sequence.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library Zip2Sequence
 

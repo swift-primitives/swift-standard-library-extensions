@@ -14,16 +14,28 @@ extension Array {
     public enum Builder {
         // MARK: - Expression Building
 
+        /// Lifts an expression into the builder's component type.
         @inlinable
         public static func buildExpression(_ expression: Element) -> [Element] {
             [expression]
         }
 
+        /// Lifts an expression into the builder's component type.
         @inlinable
         public static func buildExpression(_ expression: [Element]) -> [Element] {
             expression
         }
 
+        /// Bulk-add a sequence (Range, Set, lazy chain, etc.) without per-iteration allocation.
+        ///
+        /// Single optimized `Array.init(_ sequence:)` call.
+        @inlinable
+        public static func buildExpression<S: Sequence>(_ expression: S) -> [Element]
+        where S.Element == Element {
+            Array(expression)
+        }
+
+        /// Lifts an expression into the builder's component type.
         @inlinable
         public static func buildExpression(_ expression: Element?) -> [Element] {
             expression.map { [$0] } ?? []
@@ -31,26 +43,35 @@ extension Array {
 
         // MARK: - Partial Block Building
 
+        /// Establishes the first sub-component of a partial block.
         @inlinable
         public static func buildPartialBlock(first: [Element]) -> [Element] {
             first
         }
 
+        /// Establishes the first sub-component of a partial block.
         @inlinable
         public static func buildPartialBlock(first: Void) -> [Element] {
             []
         }
 
+        /// Establishes the first sub-component of a partial block.
         @inlinable
         public static func buildPartialBlock(first: Never) -> [Element] {}
 
+        /// Folds the next sub-component into the accumulated partial block.
         @inlinable
-        public static func buildPartialBlock(accumulated: [Element], next: [Element]) -> [Element] {
-            accumulated + next
+        public static func buildPartialBlock(
+            accumulated: consuming [Element],
+            next: [Element]
+        ) -> [Element] {
+            accumulated.append(contentsOf: next)
+            return accumulated
         }
 
         // MARK: - Block Building
 
+        /// Returns the empty component for an empty block.
         @inlinable
         public static func buildBlock() -> [Element] {
             []
@@ -58,26 +79,31 @@ extension Array {
 
         // MARK: - Control Flow
 
+        /// Resolves an `if`-without-`else` clause to its component or the empty value.
         @inlinable
         public static func buildOptional(_ component: [Element]?) -> [Element] {
             component ?? []
         }
 
+        /// Selects the `if`-branch component of an `if`/`else` clause.
         @inlinable
         public static func buildEither(first: [Element]) -> [Element] {
             first
         }
 
+        /// Selects the `else`-branch component of an `if`/`else` clause.
         @inlinable
         public static func buildEither(second: [Element]) -> [Element] {
             second
         }
 
+        /// Concatenates the components produced by a `for`-loop.
         @inlinable
         public static func buildArray(_ components: [[Element]]) -> [Element] {
             components.flatMap { $0 }
         }
 
+        /// Erases availability information from a limited-availability clause.
         @inlinable
         public static func buildLimitedAvailability(_ component: [Element]) -> [Element] {
             component
@@ -86,188 +112,9 @@ extension Array {
 }
 
 extension Array {
+    /// Builds an array from a `@Array.Builder` closure.
     @inlinable
     public init(@Array.Builder _ builder: () -> [Element]) {
-        self = builder()
-    }
-}
-
-// MARK: - ArraySlice Builder (delegates to Array.Builder)
-
-extension ArraySlice {
-    /// A result builder for declaratively constructing array slices.
-    ///
-    /// Uses `Array.Builder` internally and converts the final result to `ArraySlice`.
-    @resultBuilder
-    public enum Builder {
-        @inlinable
-        public static func buildExpression(_ expression: Element) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: [Element]) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: ArraySlice<Element>) -> [Element] {
-            Array(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: Element?) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: [Element]) -> [Element] {
-            [Element].Builder.buildPartialBlock(first: first)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: Void) -> [Element] {
-            [Element].Builder.buildPartialBlock(first: first)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: Never) -> [Element] {}
-
-        @inlinable
-        public static func buildPartialBlock(accumulated: [Element], next: [Element]) -> [Element] {
-            [Element].Builder.buildPartialBlock(accumulated: accumulated, next: next)
-        }
-
-        @inlinable
-        public static func buildBlock() -> [Element] {
-            [Element].Builder.buildBlock()
-        }
-
-        @inlinable
-        public static func buildOptional(_ component: [Element]?) -> [Element] {
-            [Element].Builder.buildOptional(component)
-        }
-
-        @inlinable
-        public static func buildEither(first: [Element]) -> [Element] {
-            [Element].Builder.buildEither(first: first)
-        }
-
-        @inlinable
-        public static func buildEither(second: [Element]) -> [Element] {
-            [Element].Builder.buildEither(second: second)
-        }
-
-        @inlinable
-        public static func buildArray(_ components: [[Element]]) -> [Element] {
-            [Element].Builder.buildArray(components)
-        }
-
-        @inlinable
-        public static func buildLimitedAvailability(_ component: [Element]) -> [Element] {
-            [Element].Builder.buildLimitedAvailability(component)
-        }
-
-        @inlinable
-        public static func buildFinalResult(_ component: [Element]) -> ArraySlice<Element> {
-            ArraySlice(component)
-        }
-    }
-}
-
-extension ArraySlice {
-    @inlinable
-    public init(@ArraySlice.Builder _ builder: () -> ArraySlice<Element>) {
-        self = builder()
-    }
-}
-
-// MARK: - ContiguousArray Builder (delegates to Array.Builder)
-
-extension ContiguousArray {
-    /// A result builder for declaratively constructing contiguous arrays.
-    ///
-    /// Uses `Array.Builder` internally and converts the final result to `ContiguousArray`.
-    @resultBuilder
-    public enum Builder {
-        @inlinable
-        public static func buildExpression(_ expression: Element) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: [Element]) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: ContiguousArray<Element>) -> [Element] {
-            Array(expression)
-        }
-
-        @inlinable
-        public static func buildExpression(_ expression: Element?) -> [Element] {
-            [Element].Builder.buildExpression(expression)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: [Element]) -> [Element] {
-            [Element].Builder.buildPartialBlock(first: first)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: Void) -> [Element] {
-            [Element].Builder.buildPartialBlock(first: first)
-        }
-
-        @inlinable
-        public static func buildPartialBlock(first: Never) -> [Element] {}
-
-        @inlinable
-        public static func buildPartialBlock(accumulated: [Element], next: [Element]) -> [Element] {
-            [Element].Builder.buildPartialBlock(accumulated: accumulated, next: next)
-        }
-
-        @inlinable
-        public static func buildBlock() -> [Element] {
-            [Element].Builder.buildBlock()
-        }
-
-        @inlinable
-        public static func buildOptional(_ component: [Element]?) -> [Element] {
-            [Element].Builder.buildOptional(component)
-        }
-
-        @inlinable
-        public static func buildEither(first: [Element]) -> [Element] {
-            [Element].Builder.buildEither(first: first)
-        }
-
-        @inlinable
-        public static func buildEither(second: [Element]) -> [Element] {
-            [Element].Builder.buildEither(second: second)
-        }
-
-        @inlinable
-        public static func buildArray(_ components: [[Element]]) -> [Element] {
-            [Element].Builder.buildArray(components)
-        }
-
-        @inlinable
-        public static func buildLimitedAvailability(_ component: [Element]) -> [Element] {
-            [Element].Builder.buildLimitedAvailability(component)
-        }
-
-        @inlinable
-        public static func buildFinalResult(_ component: [Element]) -> ContiguousArray<Element> {
-            ContiguousArray(component)
-        }
-    }
-}
-
-extension ContiguousArray {
-    @inlinable
-    public init(@ContiguousArray.Builder _ builder: () -> ContiguousArray<Element>) {
         self = builder()
     }
 }

@@ -1,5 +1,5 @@
 // Dictionary.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library Dictionary
 
@@ -15,12 +15,19 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two"]
     /// dict.mapKeys { "key\($0)" }  // ["key1": "one", "key2": "two"]
     /// ```
-    public func mapKeys<NewKey: Hashable>(
-        _ transform: (Key) throws -> NewKey
-    ) rethrows -> [NewKey: Value] {
-        try reduce(into: [:]) { result, pair in
-            result[try transform(pair.key)] = pair.value
+    @inlinable
+    public func mapKeys<E: Swift.Error, NewKey: Hashable>(
+        _ transform: (Key) throws(E) -> NewKey
+    ) throws(E) -> [NewKey: Value] {
+        // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
+        // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
+        // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`
+        // TRACKING: https://github.com/swiftlang/swift/issues/68734
+        var result: [NewKey: Value] = [:]
+        for (key, value) in self {
+            result[try transform(key)] = value
         }
+        return result
     }
 
     /// Returns a new dictionary by transforming keys and filtering out `nil` results.
@@ -34,14 +41,21 @@ extension Dictionary {
     /// let dict = [1: "one", 2: "two", 3: "three"]
     /// dict.compactMapKeys { $0 > 1 ? $0 : nil }  // [2: "two", 3: "three"]
     /// ```
-    public func compactMapKeys<NewKey: Hashable>(
-        _ transform: (Key) throws -> NewKey?
-    ) rethrows -> [NewKey: Value] {
-        try reduce(into: [:]) { result, pair in
-            if let newKey = try transform(pair.key) {
-                result[newKey] = pair.value
+    @inlinable
+    public func compactMapKeys<E: Swift.Error, NewKey: Hashable>(
+        _ transform: (Key) throws(E) -> NewKey?
+    ) throws(E) -> [NewKey: Value] {
+        // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
+        // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
+        // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`
+        // TRACKING: https://github.com/swiftlang/swift/issues/68734
+        var result: [NewKey: Value] = [:]
+        for (key, value) in self {
+            if let newKey = try transform(key) {
+                result[newKey] = value
             }
         }
+        return result
     }
 
     /// Compacts dictionary values, removing nil entries
@@ -73,6 +87,7 @@ extension Dictionary where Value: Equatable {
     /// let dict = ["a": 1, "b": 2]
     /// dict.inverted()  // [1: "a", 2: "b"]
     /// ```
+    @inlinable
     public func inverted() -> [Value: Key] where Value: Hashable {
         reduce(into: [:]) { result, pair in
             result[pair.value] = pair.key

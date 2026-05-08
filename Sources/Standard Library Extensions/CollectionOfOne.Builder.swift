@@ -21,6 +21,7 @@ extension CollectionOfOne {
     public enum Builder {
         // MARK: - Expression Building
 
+        /// Lifts an expression into the builder's component type.
         @inlinable
         public static func buildExpression(_ expression: Element) -> Element {
             expression
@@ -28,6 +29,7 @@ extension CollectionOfOne {
 
         // MARK: - Block Building
 
+        /// Returns the single component as the block's value.
         @inlinable
         public static func buildBlock(_ component: Element) -> Element {
             component
@@ -35,16 +37,19 @@ extension CollectionOfOne {
 
         // MARK: - Control Flow
 
+        /// Selects the `if`-branch component of an `if`/`else` clause.
         @inlinable
         public static func buildEither(first: Element) -> Element {
             first
         }
 
+        /// Selects the `else`-branch component of an `if`/`else` clause.
         @inlinable
         public static func buildEither(second: Element) -> Element {
             second
         }
 
+        /// Erases availability information from a limited-availability clause.
         @inlinable
         public static func buildLimitedAvailability(_ component: Element) -> Element {
             component
@@ -52,6 +57,7 @@ extension CollectionOfOne {
 
         // MARK: - Final Result
 
+        /// Transforms the builder's component into the final result.
         @inlinable
         public static func buildFinalResult(_ component: Element) -> CollectionOfOne<Element> {
             CollectionOfOne(component)
@@ -60,6 +66,7 @@ extension CollectionOfOne {
 }
 
 extension CollectionOfOne {
+    /// Builds a single-element collection from a `@CollectionOfOne.Builder` closure.
     @inlinable
     public init(@CollectionOfOne.Builder _ builder: () -> CollectionOfOne<Element>) {
         self = builder()

@@ -1,5 +1,5 @@
 // UInt8.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Pure Swift UInt8 utilities
 

@@ -5,7 +5,7 @@ import Testing
 @Suite
 struct `Result.Builder Tests` {
 
-    enum TestError: Error, Equatable {
+    enum TestError: Swift.Error, Equatable {
         case first
         case second
         case third
@@ -16,7 +16,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Returns first success`() {
-            let result: Result<Int, TestError> = Result.first {
+            let result: Result<Int, TestError> = .first {
                 Result<Int, TestError>.failure(.first)
                 Result<Int, TestError>.success(42)
                 Result<Int, TestError>.success(100)
@@ -27,7 +27,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Returns last failure when all fail`() {
-            let result: Result<Int, TestError> = Result.first {
+            let result: Result<Int, TestError> = .first {
                 Result<Int, TestError>.failure(.first)
                 Result<Int, TestError>.failure(.second)
                 Result<Int, TestError>.failure(.third)
@@ -38,7 +38,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Direct success value`() {
-            let result: Result<Int, TestError> = Result.first {
+            let result: Result<Int, TestError> = .first {
                 42
             }
 
@@ -48,7 +48,7 @@ struct `Result.Builder Tests` {
         @Test
         func `If-else first branch`() {
             let condition = true
-            let result: Result<String, TestError> = Result.first {
+            let result: Result<String, TestError> = .first {
                 if condition {
                     Result<String, TestError>.success("first")
                 } else {
@@ -62,7 +62,7 @@ struct `Result.Builder Tests` {
         @Test
         func `If-else second branch`() {
             let condition = false
-            let result: Result<String, TestError> = Result.first {
+            let result: Result<String, TestError> = .first {
                 if condition {
                     Result<String, TestError>.success("first")
                 } else {
@@ -79,7 +79,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Collects all successes`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 Result<Int, TestError>.success(1)
                 Result<Int, TestError>.success(2)
                 Result<Int, TestError>.success(3)
@@ -90,7 +90,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Fails on first error`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 Result<Int, TestError>.success(1)
                 Result<Int, TestError>.failure(.second)
                 Result<Int, TestError>.success(3)
@@ -101,7 +101,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Empty block returns empty array`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
             }
 
             #expect(result == .success([]))
@@ -109,7 +109,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Direct values are wrapped`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 1
                 2
                 3
@@ -120,7 +120,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `For loop collects all`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 for i in 1...3 {
                     Result<Int, TestError>.success(i * 10)
                 }
@@ -131,7 +131,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `For loop fails on error`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 for i in 1...3 {
                     if i == 2 {
                         Result<Int, TestError>.failure(.second)
@@ -147,7 +147,7 @@ struct `Result.Builder Tests` {
         @Test
         func `Conditional inclusion - some`() {
             let include = true
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 Result<Int, TestError>.success(1)
                 if include {
                     Result<Int, TestError>.success(2)
@@ -161,7 +161,7 @@ struct `Result.Builder Tests` {
         @Test
         func `Conditional inclusion - none`() {
             let include = false
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 Result<Int, TestError>.success(1)
                 if include {
                     Result<Int, TestError>.success(2)
@@ -225,7 +225,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Limited availability passthrough - first`() {
-            let result: Result<Int, TestError> = Result.first {
+            let result: Result<Int, TestError> = .first {
                 Result<Int, TestError>.failure(.first)
                 if #available(macOS 26, iOS 26, *) {
                     Result<Int, TestError>.success(42)
@@ -236,7 +236,7 @@ struct `Result.Builder Tests` {
 
         @Test
         func `Limited availability passthrough - all`() {
-            let result: Result<[Int], TestError> = Result.all {
+            let result = Result<Int, TestError>.all {
                 Result<Int, TestError>.success(1)
                 if #available(macOS 26, iOS 26, *) {
                     Result<Int, TestError>.success(2)

@@ -1,4 +1,12 @@
-extension Result {
+// swift-format-ignore-file: AmbiguousTrailingClosureOverload
+//
+// The two `Result.first(_:)` overloads (returning `Result<Success, Failure>` and
+// `Result<Success, Failure>?`) share a base name. The optional-returning overload
+// is marked `@_disfavoredOverload`, which resolves the call-site ambiguity at type
+// check. swift-format's syntactic check does not see that attribute and would
+// otherwise flag both overloads.
+
+extension Result where Success: Copyable {
     /// Namespace for Result builders.
     public enum Builder {
         /// A result builder that chains fallible operations, returning the first success.
@@ -20,11 +28,13 @@ extension Result {
         public enum First {
             // MARK: - Expression Building
 
+            /// Lifts an expression into the builder's component type.
             @inlinable
             public static func buildExpression(_ expression: Success) -> Result<Success, Failure> {
                 .success(expression)
             }
 
+            /// Lifts an expression into the builder's component type.
             @inlinable
             public static func buildExpression(
                 _ expression: Result<Success, Failure>
@@ -34,6 +44,7 @@ extension Result {
 
             // MARK: - Partial Block Building
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(
                 first: Result<Success, Failure>
@@ -41,6 +52,7 @@ extension Result {
                 first
             }
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(
                 first: Result<Success, Failure>?
@@ -48,14 +60,17 @@ extension Result {
                 first
             }
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(first: Void) -> Result<Success, Failure>? {
                 nil
             }
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(first: Never) -> Result<Success, Failure> {}
 
+            /// Folds the next sub-component into the accumulated partial block.
             @inlinable
             public static func buildPartialBlock(
                 accumulated: Result<Success, Failure>,
@@ -64,11 +79,13 @@ extension Result {
                 switch accumulated {
                 case .success:
                     accumulated
+
                 case .failure:
                     next
                 }
             }
 
+            /// Folds the next sub-component into the accumulated partial block.
             @inlinable
             public static func buildPartialBlock(
                 accumulated: Result<Success, Failure>,
@@ -77,6 +94,7 @@ extension Result {
                 switch accumulated {
                 case .success:
                     accumulated
+
                 case .failure:
                     next ?? accumulated
                 }
@@ -84,6 +102,7 @@ extension Result {
 
             // MARK: - Control Flow
 
+            /// Resolves an `if`-without-`else` clause to its component or the empty value.
             @inlinable
             public static func buildOptional(
                 _ component: Result<Success, Failure>?
@@ -91,6 +110,7 @@ extension Result {
                 component
             }
 
+            /// Selects the `if`-branch component of an `if`/`else` clause.
             @inlinable
             public static func buildEither(
                 first: Result<Success, Failure>
@@ -98,6 +118,7 @@ extension Result {
                 first
             }
 
+            /// Selects the `else`-branch component of an `if`/`else` clause.
             @inlinable
             public static func buildEither(
                 second: Result<Success, Failure>
@@ -105,6 +126,7 @@ extension Result {
                 second
             }
 
+            /// Concatenates the components produced by a `for`-loop.
             @inlinable
             public static func buildArray(
                 _ components: [Result<Success, Failure>]
@@ -114,6 +136,7 @@ extension Result {
                     switch component {
                     case .success:
                         return component
+
                     case .failure:
                         lastFailure = component
                     }
@@ -121,6 +144,7 @@ extension Result {
                 return lastFailure
             }
 
+            /// Erases availability information from a limited-availability clause.
             @inlinable
             public static func buildLimitedAvailability(
                 _ component: Result<Success, Failure>
@@ -145,12 +169,13 @@ extension Result {
         public enum All {
             // MARK: - Expression Building
 
+            /// Lifts an expression into the builder's component type.
             @inlinable
-            public static func buildExpression(_ expression: Success) -> Result<[Success], Failure>
-            {
+            public static func buildExpression(_ expression: Success) -> Result<[Success], Failure> {
                 .success([expression])
             }
 
+            /// Lifts an expression into the builder's component type.
             @inlinable
             public static func buildExpression(
                 _ expression: Result<Success, Failure>
@@ -160,6 +185,7 @@ extension Result {
 
             // MARK: - Partial Block Building
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(
                 first: Result<[Success], Failure>
@@ -167,14 +193,17 @@ extension Result {
                 first
             }
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(first: Void) -> Result<[Success], Failure> {
                 .success([])
             }
 
+            /// Establishes the first sub-component of a partial block.
             @inlinable
             public static func buildPartialBlock(first: Never) -> Result<[Success], Failure> {}
 
+            /// Folds the next sub-component into the accumulated partial block.
             @inlinable
             public static func buildPartialBlock(
                 accumulated: Result<[Success], Failure>,
@@ -183,8 +212,10 @@ extension Result {
                 switch (accumulated, next) {
                 case (.success(let accValues), .success(let nextValues)):
                     .success(accValues + nextValues)
+
                 case (.failure(let error), _):
                     .failure(error)
+
                 case (_, .failure(let error)):
                     .failure(error)
                 }
@@ -192,6 +223,7 @@ extension Result {
 
             // MARK: - Block Building
 
+            /// Returns the empty component for an empty block.
             @inlinable
             public static func buildBlock() -> Result<[Success], Failure> {
                 .success([])
@@ -199,6 +231,7 @@ extension Result {
 
             // MARK: - Control Flow
 
+            /// Resolves an `if`-without-`else` clause to its component or the empty value.
             @inlinable
             public static func buildOptional(
                 _ component: Result<[Success], Failure>?
@@ -206,6 +239,7 @@ extension Result {
                 component ?? .success([])
             }
 
+            /// Selects the `if`-branch component of an `if`/`else` clause.
             @inlinable
             public static func buildEither(
                 first: Result<[Success], Failure>
@@ -213,6 +247,7 @@ extension Result {
                 first
             }
 
+            /// Selects the `else`-branch component of an `if`/`else` clause.
             @inlinable
             public static func buildEither(
                 second: Result<[Success], Failure>
@@ -220,6 +255,7 @@ extension Result {
                 second
             }
 
+            /// Concatenates the components produced by a `for`-loop.
             @inlinable
             public static func buildArray(
                 _ components: [Result<[Success], Failure>]
@@ -229,6 +265,7 @@ extension Result {
                     switch component {
                     case .success(let values):
                         collected.append(contentsOf: values)
+
                     case .failure(let error):
                         return .failure(error)
                     }
@@ -236,6 +273,7 @@ extension Result {
                 return .success(collected)
             }
 
+            /// Erases availability information from a limited-availability clause.
             @inlinable
             public static func buildLimitedAvailability(
                 _ component: Result<[Success], Failure>
@@ -248,7 +286,11 @@ extension Result {
 
 // MARK: - Convenience Entry Points
 
-extension Result {
+extension Result where Success: Copyable {
+    /// Tries each operation in sequence; returns the first success or the final failure.
+    ///
+    /// The `Result<…>?` overload below carries `@_disfavoredOverload`, so the type checker
+    /// resolves the trailing-closure call site unambiguously despite the shared base name.
     @inlinable
     public static func first(
         @Builder.First _ builder: () -> Result<Success, Failure>
@@ -256,13 +298,16 @@ extension Result {
         builder()
     }
 
+    /// Tries each operation in sequence; returns the first success or the final failure.
     @inlinable
+    @_disfavoredOverload
     public static func first(
         @Builder.First _ builder: () -> Result<Success, Failure>?
     ) -> Result<Success, Failure>? {
         builder()
     }
 
+    /// Runs every operation; returns all successes or fails on the first error.
     @inlinable
     public static func all(
         @Builder.All _ builder: () -> Result<[Success], Failure>

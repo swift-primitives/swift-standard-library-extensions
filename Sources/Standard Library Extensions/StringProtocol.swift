@@ -1,36 +1,31 @@
 // StringProtocol.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Pure Swift StringProtocol utilities
 
 // MARK: - Case Formatting
-
-extension StringProtocol {
-    /// Formats the string using the specified case transformation
-    /// - Parameter case: The case format to apply
-    /// - Returns: Formatted string
-    ///
-    /// Example:
-    /// ```swift
-    /// "hello world".formatted(as: .upper)  // "HELLO WORLD"
-    /// "hello world".formatted(as: .title)  // "Hello World"
-    /// let sub = "hello world"[...]; sub.formatted(as: .upper)  // Works on Substring too
-    /// ```
-    public func formatted(as case: String.Case) -> String {
-        `case`.transform(String(self))
-    }
-}
+//
+// String.Case, formatted(as:), and related case-formatting APIs have been
+// moved to swift-format-primitives (as Format.Case, formatted(_:)). See
+// swift-format-primitives/Research/case-formatting-placement.md.
 
 // MARK: - String Search Operations
 
-extension StringProtocol {
-    /// Finds the range of the first occurrence of a given string
+extension StringProtocol where UTF8View.Index == Index {
+    /// Finds the range of the first occurrence of a given string.
     ///
-    /// Foundation-free implementation for finding substrings.
-    /// Works with both String and Substring for zero-copy operations.
+    /// Byte-literal scan over the UTF-8 view. Canonical equivalence is **not**
+    /// applied: `"é" (U+00E9)` will not match `"é" (U+0065 U+0301)`.
+    /// Normalize inputs (e.g., to NFC) if grapheme-cluster equivalence is
+    /// required.
     ///
-    /// - Parameter string: The string to search for
-    /// - Returns: Range of the first occurrence, or nil if not found
+    /// UTF-8 is self-synchronizing, so every byte-level match begins and ends
+    /// on a Unicode scalar boundary; the returned range is a valid index range
+    /// on `self`. Works with both `String` and `Substring` for zero-copy
+    /// operations.
+    ///
+    /// - Parameter string: The string to search for.
+    /// - Returns: Range of the first occurrence, or `nil` if not found.
     ///
     /// Example:
     /// ```swift
@@ -41,36 +36,29 @@ extension StringProtocol {
     /// let sub = "Hello World"[...]
     /// sub.range(of: "World")            // Range in Substring
     /// ```
+    @inlinable
     public func range(of string: some StringProtocol) -> Range<Index>? {
         guard !string.isEmpty else { return startIndex..<startIndex }
-        guard string.count <= count else { return nil }
 
-        let searchChars = Array(string)
+        let needle = string.utf8
+        let needleCount = needle.count
+        let haystackCount = utf8.count
+        guard needleCount <= haystackCount else { return nil }
 
-        var searchIndex = startIndex
-        while searchIndex < endIndex {
-            let remainingDistance = distance(from: searchIndex, to: endIndex)
-            guard remainingDistance >= string.count else { break }
+        let lastStart = utf8.index(utf8.startIndex, offsetBy: haystackCount - needleCount)
+        var start = utf8.startIndex
 
-            var matchIndex = searchIndex
-            var patternIndex = searchChars.startIndex
-
-            // Try to match the pattern starting at searchIndex
-            while patternIndex < searchChars.endIndex {
-                if self[matchIndex] != searchChars[patternIndex] {
-                    break
-                }
-                matchIndex = index(after: matchIndex)
-                patternIndex = searchChars.index(after: patternIndex)
+        while start <= lastStart {
+            var h = start
+            var n = needle.startIndex
+            while n < needle.endIndex, utf8[h] == needle[n] {
+                h = utf8.index(after: h)
+                n = needle.index(after: n)
             }
-
-            // If we matched the entire pattern, return the range
-            if patternIndex == searchChars.endIndex {
-                let endIndex = index(searchIndex, offsetBy: string.count)
-                return searchIndex..<endIndex
+            if n == needle.endIndex {
+                return start..<h
             }
-
-            searchIndex = index(after: searchIndex)
+            start = utf8.index(after: start)
         }
 
         return nil
@@ -80,7 +68,7 @@ extension StringProtocol {
 // MARK: - String Trimming
 
 extension StringProtocol {
-    /// Trims characters from both ends of a string (authoritative implementation)
+    /// Trims characters from both ends of a string (authoritative implementation).
     ///
     /// - Parameters:
     ///   - string: The string to trim
@@ -95,6 +83,7 @@ extension StringProtocol {
     /// String.trimming("  hello  ", where: { $0.isWhitespace })  // "hello"
     /// String.trimming("123hello456", where: \.isNumber)         // "hello"
     /// ```
+    @inlinable
     public static func trimming(
         _ string: Self,
         where predicate: (Character) -> Bool
@@ -115,7 +104,7 @@ extension StringProtocol {
         return string[start..<end]
     }
 
-    /// Trims characters from both ends of a string
+    /// Trims characters from both ends of a string.
     ///
     /// Convenience overload that delegates to `trimming(_:where:)`.
     ///
@@ -128,6 +117,7 @@ extension StringProtocol {
     /// ```swift
     /// String.trimming("  hello  ", of: [" "])  // "hello"
     /// ```
+    @inlinable
     public static func trimming(
         _ string: Self,
         of characterSet: Set<Character>
@@ -135,7 +125,7 @@ extension StringProtocol {
         trimming(string, where: characterSet.contains)
     }
 
-    /// Trims characters matching a predicate from both ends of the string
+    /// Trims characters matching a predicate from both ends of the string.
     ///
     /// Delegates to the authoritative `Self.trimming(_:where:)` implementation.
     ///
@@ -147,11 +137,12 @@ extension StringProtocol {
     /// "  hello  ".trimming(where: { $0.isWhitespace })  // "hello"
     /// "123hello456".trimming(where: \.isNumber)         // "hello"
     /// ```
+    @inlinable
     public func trimming(where predicate: (Character) -> Bool) -> SubSequence {
         Self.trimming(self, where: predicate)
     }
 
-    /// Trims characters from both ends of the string
+    /// Trims characters from both ends of the string.
     ///
     /// Delegates to the authoritative `Self.trimming(_:where:)` implementation.
     ///
@@ -164,11 +155,14 @@ extension StringProtocol {
     /// "\t\nhello\n\t".trimming(["\t", "\n"]) // "hello"
     /// "🎉hello🎉".trimming(["🎉"])          // "hello"
     /// ```
+    @inlinable
     @_disfavoredOverload
     public func trimming(_ characterSet: Set<Character>) -> SubSequence {
         Self.trimming(self, of: characterSet)
     }
 
+    /// Returns the string with the given characters trimmed from both ends.
+    @inlinable
     public func trimming(_ characterSet: Set<Character>) -> String {
         String(Self.trimming(self, of: characterSet))
     }

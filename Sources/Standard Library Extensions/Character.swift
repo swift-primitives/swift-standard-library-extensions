@@ -1,5 +1,5 @@
 // Character.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Pure Swift character utilities
 

@@ -1,5 +1,5 @@
 // Bool.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library Bool
 
@@ -12,5 +12,6 @@ extension Bool {
     /// true.int   // 1
     /// false.int  // 0
     /// ```
-    public var int: Int { .init(self) }
+    @inlinable
+    public var int: Int { self ? 1 : 0 }
 }

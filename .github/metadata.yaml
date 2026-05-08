@@ -1,0 +1,8 @@
+# .github/metadata.yaml
+description: "Standard library extensions for Swift."
+topics:
+  - primitives
+  - data-structures
+  - type-safety
+  - concurrency
+homepage: "https://swift-institute.org"

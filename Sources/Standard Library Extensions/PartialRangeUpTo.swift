@@ -1,5 +1,5 @@
 // PartialRangeUpTo.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library PartialRangeUpTo
 

@@ -1,5 +1,5 @@
 // Set.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library Set
 
@@ -16,6 +16,7 @@ extension Set {
     /// let (evens, odds) = numbers.partition(where: { $0.isMultiple(of: 2) })
     /// // evens: [2, 4, 6], odds: [1, 3, 5]
     /// ```
+    @inlinable
     public func partition(
         where predicate: (Element) -> Bool
     ) -> (satisfying: Set<Element>, failing: Set<Element>) {
@@ -45,6 +46,7 @@ extension Set {
     /// set.subsets(ofSize: 2)  // [[1, 2], [1, 3], [2, 3]]
     /// set.subsets(ofSize: 0)  // [[]]
     /// ```
+    @inlinable
     public func subsets(ofSize k: Int) -> Set<Set<Element>> {
         guard k >= 0 else { return [] }
         guard k <= count else { return [] }
@@ -89,6 +91,7 @@ extension Set {
     /// let b: Set = ["x", "y"]
     /// a.cartesianProduct(b)  // [(1, "x"), (1, "y"), (2, "x"), (2, "y")]
     /// ```
+    @inlinable
     public func cartesianProduct<Other>(_ other: Set<Other>) -> [(Element, Other)] {
         var result: [(Element, Other)] = []
         result.reserveCapacity(count * other.count)
@@ -113,6 +116,7 @@ extension Set {
     /// let set: Set = [1, 2, 3]
     /// set.cartesianSquare()  // [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
     /// ```
+    @inlinable
     public func cartesianSquare() -> [(Element, Element)] {
         cartesianProduct(self)
     }

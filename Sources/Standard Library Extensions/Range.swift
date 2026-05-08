@@ -1,5 +1,5 @@
 // Range.swift
-// swift-standards
+// swift-standard-library-extensions
 //
 // Extensions for Swift standard library Range
 
@@ -17,6 +17,7 @@ extension Range where Bound: Strideable {
     /// let d = 5..<7
     /// c.overlap(d)  // nil
     /// ```
+    @inlinable
     public func overlap(_ other: Range<Bound>) -> Range<Bound>? {
         let lower = Swift.max(lowerBound, other.lowerBound)
         let upper = Swift.min(upperBound, other.upperBound)
@@ -35,6 +36,7 @@ extension Range where Bound: Strideable {
     /// range.clamped(to: 5..<15)  // 5..<10
     /// range.clamped(to: 20..<30) // nil
     /// ```
+    @inlinable
     public func clamped(to bounds: Range<Bound>) -> Range<Bound>? {
         overlap(bounds)
     }
@@ -52,6 +54,7 @@ extension Range where Bound: Strideable {
     /// range.split(at: 1)  // nil
     /// range.split(at: 15) // nil
     /// ```
+    @inlinable
     public func split(at point: Bound) -> (lower: Range<Bound>, upper: Range<Bound>)? {
         guard contains(point), point != lowerBound else { return nil }
         return (lowerBound..<point, point..<upperBound)
