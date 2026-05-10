@@ -124,6 +124,12 @@ The package is `nonisolated(nonsending)`-aware and uses Swift 6 language feature
 
 Pre-1.0. APIs are still evolving and may change between minor versions until 1.0.0 is tagged. Within the 0.x.y line, `0.<major>.0` releases may carry breaking changes; `0.<major>.<patch>` releases are additive only.
 
+## Community
+
+<!-- BEGIN: discussion -->
+Discuss this package: [swift-institute/discussions/22](https://github.com/orgs/swift-institute/discussions/22)
+<!-- END: discussion -->
+
 ## License
 
 Apache License 2.0 — see [LICENSE.md](./LICENSE.md).
