@@ -32,11 +32,11 @@ extension RangeReplaceableCollection where Element: Hashable {
     /// ## Example
     ///
     /// ```swift
-    /// [1, 2, 2, 3, 1, 4].removingDuplicates()  // [1, 2, 3, 4]
-    /// "hello".removingDuplicates()             // "helo"
+    /// [1, 2, 2, 3, 1, 4].uniqued()  // [1, 2, 3, 4]
+    /// "hello".uniqued()             // "helo"
     /// ```
     @inlinable
-    public func removingDuplicates() -> Self {
+    public func uniqued() -> Self {
         var seen: Set<Element> = []
         return filter { seen.insert($0).inserted }
     }

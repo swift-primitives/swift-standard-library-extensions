@@ -120,13 +120,13 @@ struct `Set - Extensions` {
         #expect(result.count == 6)
     }
 
-    // MARK: - cartesianProduct
+    // MARK: - cartesian.product
 
     @Test
-    func `cartesianProduct produces all pairs`() {
+    func `cartesian product produces all pairs`() {
         let a: Set = [1, 2]
         let b: Set = ["x", "y"]
-        let result = a.cartesianProduct(b)
+        let result = a.cartesian.product(b)
 
         #expect(result.count == 4)
         #expect(result.contains(where: { $0 == (1, "x") }))
@@ -136,29 +136,29 @@ struct `Set - Extensions` {
     }
 
     @Test
-    func `cartesianProduct with empty set returns empty`() {
+    func `cartesian product with empty set returns empty`() {
         let a: Set = [1, 2]
         let b: Set<String> = []
-        let result = a.cartesianProduct(b)
+        let result = a.cartesian.product(b)
 
         #expect(result.isEmpty)
     }
 
     @Test
-    func `cartesianProduct count equals product of cardinalities`() {
+    func `cartesian product count equals product of cardinalities`() {
         let a: Set = [1, 2, 3]
         let b: Set = ["a", "b", "c", "d"]
-        let result = a.cartesianProduct(b)
+        let result = a.cartesian.product(b)
 
         #expect(result.count == a.count * b.count)
     }
 
-    // MARK: - cartesianSquare
+    // MARK: - cartesian.square
 
     @Test
-    func `cartesianSquare includes all pairs from same set`() {
+    func `cartesian square includes all pairs from same set`() {
         let set: Set = [1, 2, 3]
-        let result = set.cartesianSquare()
+        let result = set.cartesian.square()
 
         #expect(result.count == 9)
         #expect(result.contains(where: { $0 == (1, 1) }))
@@ -168,9 +168,9 @@ struct `Set - Extensions` {
     }
 
     @Test
-    func `cartesianSquare count equals n squared`() {
+    func `cartesian square count equals n squared`() {
         let set: Set = [1, 2, 3, 4]
-        let result = set.cartesianSquare()
+        let result = set.cartesian.square()
 
         #expect(result.count == set.count * set.count)
     }
@@ -201,16 +201,16 @@ struct `Set - Extensions` {
 //        }
 //
 //        @Test(.timed(threshold: .milliseconds(50), maxAllocations: 500_000))
-//        func `cartesianProduct 100x100`() {
+//        func `cartesian product 100x100`() {
 //            let a: Set = Set(1...100)
 //            let b: Set = Set(1...100)
-//            _ = a.cartesianProduct(b)
+//            _ = a.cartesian.product(b)
 //        }
 //
 //        @Test(.timed(threshold: .milliseconds(20), maxAllocations: 2_000_000))
-//        func `cartesianSquare 100 elements`() {
+//        func `cartesian square 100 elements`() {
 //            let set: Set = Set(1...100)
-//            _ = set.cartesianSquare()
+//            _ = set.cartesian.square()
 //        }
 //    }
 // }

@@ -15,21 +15,23 @@ extension Set<String> {
     public struct `Swift` {
         @usableFromInline
         internal init() {}
+    }
+}
 
-        /// Swift keywords that need to be escaped with backticks when used as identifiers.
-        public static let keywords: Set<String> = [
-            "as", "break", "case", "catch", "class", "continue", "default", "defer",
-            "do", "else", "enum", "extension", "fallthrough", "false", "fileprivate",
-            "for", "func", "guard", "if", "import", "in", "init", "inout", "internal",
-            "is", "let", "nil", "operator", "private", "protocol", "public", "repeat",
-            "return", "self", "Self", "static", "struct", "subscript", "super", "switch",
-            "throw", "throws", "true", "try", "typealias", "var", "where", "while",
-        ]
+extension Set<String>.`Swift` {
+    /// Swift keywords that need to be escaped with backticks when used as identifiers.
+    public static let keywords: Set<String> = [
+        "as", "break", "case", "catch", "class", "continue", "default", "defer",
+        "do", "else", "enum", "extension", "fallthrough", "false", "fileprivate",
+        "for", "func", "guard", "if", "import", "in", "init", "inout", "internal",
+        "is", "let", "nil", "operator", "private", "protocol", "public", "repeat",
+        "return", "self", "Self", "static", "struct", "subscript", "super", "switch",
+        "throw", "throws", "true", "try", "typealias", "var", "where", "while",
+    ]
 
-        /// Wraps a Swift reserved identifier in backticks; passes other identifiers unchanged.
-        @inlinable
-        public func escape(_ identifier: String) -> String {
-            Set<String>.Swift.keywords.contains(identifier) ? "`\(identifier)`" : identifier
-        }
+    /// Wraps a Swift reserved identifier in backticks; passes other identifiers unchanged.
+    @inlinable
+    public func escape(_ identifier: String) -> String {
+        Set<String>.Swift.keywords.contains(identifier) ? "`\(identifier)`" : identifier
     }
 }

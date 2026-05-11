@@ -79,6 +79,25 @@ extension Set {
         return result
     }
 
+    /// Namespace for Cartesian operations on this set.
+    @inlinable
+    public var cartesian: Cartesian {
+        Cartesian(base: self)
+    }
+
+    /// Namespace for Cartesian operations on a Set.
+    public struct Cartesian {
+        @usableFromInline
+        internal let base: Set<Element>
+
+        @usableFromInline
+        internal init(base: Set<Element>) {
+            self.base = base
+        }
+    }
+}
+
+extension Set.Cartesian {
     /// Returns all ordered pairs combining elements from both sets.
     ///
     /// Generates all combinations where the first element comes from this set and the second from the other set.
@@ -89,14 +108,14 @@ extension Set {
     /// ```swift
     /// let a: Set = [1, 2]
     /// let b: Set = ["x", "y"]
-    /// a.cartesianProduct(b)  // [(1, "x"), (1, "y"), (2, "x"), (2, "y")]
+    /// a.cartesian.product(b)  // [(1, "x"), (1, "y"), (2, "x"), (2, "y")]
     /// ```
     @inlinable
-    public func cartesianProduct<Other>(_ other: Set<Other>) -> [(Element, Other)] {
+    public func product<Other>(_ other: Set<Other>) -> [(Element, Other)] {
         var result: [(Element, Other)] = []
-        result.reserveCapacity(count * other.count)
+        result.reserveCapacity(base.count * other.count)
 
-        for element in self {
+        for element in base {
             for otherElement in other {
                 result.append((element, otherElement))
             }
@@ -107,17 +126,17 @@ extension Set {
 
     /// Returns all ordered pairs combining elements from the set with itself.
     ///
-    /// Equivalent to `cartesianProduct(self)`. Generates all possible ordered pairs including pairs like (1, 1).
+    /// Equivalent to `cartesian.product(self)`. Generates all possible ordered pairs including pairs like (1, 1).
     /// Use this to generate all possible pairings within a single set.
     ///
     /// ## Example
     ///
     /// ```swift
     /// let set: Set = [1, 2, 3]
-    /// set.cartesianSquare()  // [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
+    /// set.cartesian.square()  // [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
     /// ```
     @inlinable
-    public func cartesianSquare() -> [(Element, Element)] {
-        cartesianProduct(self)
+    public func square() -> [(Element, Element)] {
+        product(base)
     }
 }
