@@ -28,6 +28,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../../swift-foundations/swift-linter"),
+        .package(path: "../../../swift-foundations/swift-institute-linter-rules"),
         .package(path: "../../swift-primitives-linter-rules"),
     ],
     targets: [
@@ -36,6 +37,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Linter", package: "swift-linter"),
                 .product(name: "Linter Primitives Rules", package: "swift-primitives-linter-rules"),
+                .product(name: "Linter Rule Naming", package: "swift-institute-linter-rules"),
             ]
         ),
     ],
