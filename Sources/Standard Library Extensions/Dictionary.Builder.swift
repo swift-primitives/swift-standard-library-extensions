@@ -24,7 +24,7 @@ extension Dictionary {
 
         /// Bulk-add a sequence of key-value pairs without per-iteration allocation.
         @inlinable
-        public static func buildExpression<S: Sequence>(_ expression: S) -> [Key: Value]
+        public static func buildExpression<S: Swift.Sequence>(_ expression: S) -> [Key: Value]
         where S.Element == (Key, Value) {
             Dictionary(expression, uniquingKeysWith: { _, new in new })
         }

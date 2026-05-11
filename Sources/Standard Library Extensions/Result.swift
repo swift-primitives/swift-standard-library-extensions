@@ -139,7 +139,7 @@ extension Result where Success: Copyable {
     /// not `any Error`.
     @inlinable
     public init(catching body: () throws(Failure) -> Success) {
-        do {
+        do throws(Failure) {
             self = .success(try body())
         } catch {
             self = .failure(error)

@@ -24,7 +24,7 @@ extension ContiguousArray {
         ///
         /// Single optimized `ContiguousArray.init(_ sequence:)` call.
         @inlinable
-        public static func buildExpression<S: Sequence>(_ expression: S) -> [Element]
+        public static func buildExpression<S: Swift.Sequence>(_ expression: S) -> [Element]
         where S.Element == Element {
             Array(expression)
         }

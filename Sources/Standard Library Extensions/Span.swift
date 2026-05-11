@@ -20,13 +20,11 @@ extension Swift.Span where Element: Copyable {
     ) throws(E) -> R {
         var thrown: E? = nil
         let result: R? = unsafe self.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Element>) -> R? in
-            do {
+            do throws(E) {
                 return try unsafe body(buffer)
-            } catch let e as E {
-                thrown = e
-                return nil
             } catch {
-                preconditionFailure("unexpected error type")
+                thrown = error
+                return nil
             }
         }
         if let thrown { throw thrown }
@@ -45,13 +43,11 @@ extension Swift.MutableSpan where Element: Copyable {
     ) throws(E) -> R {
         var thrown: E? = nil
         let result: R? = unsafe self.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Element>) -> R? in
-            do {
+            do throws(E) {
                 return try unsafe body(buffer)
-            } catch let e as E {
-                thrown = e
-                return nil
             } catch {
-                preconditionFailure("unexpected error type")
+                thrown = error
+                return nil
             }
         }
         if let thrown { throw thrown }
@@ -67,13 +63,11 @@ extension Swift.MutableSpan where Element: Copyable {
     ) throws(E) -> R {
         var thrown: E? = nil
         let result: R? = unsafe self.withUnsafeMutableBufferPointer { (buffer: UnsafeMutableBufferPointer<Element>) -> R? in
-            do {
+            do throws(E) {
                 return try unsafe body(buffer)
-            } catch let e as E {
-                thrown = e
-                return nil
             } catch {
-                preconditionFailure("unexpected error type")
+                thrown = error
+                return nil
             }
         }
         if let thrown { throw thrown }

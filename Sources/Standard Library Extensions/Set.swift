@@ -68,10 +68,10 @@ extension Set {
                 return
             }
 
-            for i in start..<elements.count {
+            for index in elements[start...].indices {
                 var next = current
-                next.insert(elements[i])
-                combine(start: i + 1, current: next)
+                next.insert(elements[index])
+                combine(start: index + 1, current: next)
             }
         }
 

@@ -16,13 +16,11 @@ public func withUnsafePointer<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafePointer(to: value) { ptr in
-        do {
+        do throws(E) {
             return try unsafe body(ptr)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }
@@ -40,13 +38,11 @@ public func withUnsafePointer<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafePointer(to: &value) { ptr in
-        do {
+        do throws(E) {
             return try unsafe body(ptr)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }
@@ -64,13 +60,11 @@ public func withUnsafeMutablePointer<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafeMutablePointer(to: &value) { ptr in
-        do {
+        do throws(E) {
             return try unsafe body(ptr)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }
@@ -88,13 +82,11 @@ public func withUnsafeBytes<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafeBytes(of: value) { bytes in
-        do {
+        do throws(E) {
             return try unsafe body(bytes)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }
@@ -112,13 +104,11 @@ public func withUnsafeBytes<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafeBytes(of: &value) { bytes in
-        do {
+        do throws(E) {
             return try unsafe body(bytes)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }
@@ -136,13 +126,11 @@ public func withUnsafeMutableBytes<T, R, E: Swift.Error>(
 ) throws(E) -> R {
     var thrown: E? = nil
     let result: R? = unsafe Swift.withUnsafeMutableBytes(of: &value) { bytes in
-        do {
+        do throws(E) {
             return try unsafe body(bytes)
-        } catch let e as E {
-            thrown = e
-            return nil
         } catch {
-            preconditionFailure("unexpected error type")
+            thrown = error
+            return nil
         }
     }
     if let thrown { throw thrown }

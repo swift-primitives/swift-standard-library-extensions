@@ -15,9 +15,11 @@ public func withUnsafeTemporaryAllocation<T, E: Swift.Error>(
 ) throws(E) {
     var thrown: E? = nil
     unsafe Swift.withUnsafeTemporaryAllocation(of: type, capacity: capacity) { buffer in
-        do {
+        do throws(E) {
             unsafe try body(buffer)
-        } catch let e as E { thrown = e } catch { preconditionFailure("unexpected error type") }
+        } catch {
+            thrown = error
+        }
     }
     if let thrown { throw thrown }
 }
@@ -32,11 +34,11 @@ public func withUnsafeTemporaryAllocation<E: Swift.Error>(
 ) throws(E) {
     var thrown: E? = nil
     unsafe Swift.withUnsafeTemporaryAllocation(byteCount: byteCount, alignment: alignment) { buffer in
-        do {
+        do throws(E) {
             unsafe try body(buffer)
-        } catch let e as E {
-            thrown = e
-        } catch { preconditionFailure("unexpected error type") }
+        } catch {
+            thrown = error
+        }
     }
     if let thrown { throw thrown }
 }
