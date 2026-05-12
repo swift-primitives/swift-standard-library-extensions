@@ -9,9 +9,10 @@
 // the caller's isolation context so that resume() executes synchronously.
 //
 // Note: The throwing variant (withUnsafeThrowingContinuation) is NOT provided here
-// because the stdlib forces UnsafeContinuation<T, any Error>, which violates
-// typed-throws conventions [API-ERR-001]. Once the stdlib pre-pitch lands with
-// typed-throws support for continuations, a throwing overload can be added.
+// because the stdlib forces the failure parameter to the erased `Error` existential
+// in the continuation type, which violates typed-throws conventions [API-ERR-001].
+// Once the stdlib pre-pitch lands with typed-throws support for continuations, a
+// throwing overload can be added.
 //
 // See: https://forums.swift.org/t/pre-pitch-updating-with-checked-unsafe-continuation-to-support-typed-throws-and-perhaps-nonisolated-nonsending/84770
 

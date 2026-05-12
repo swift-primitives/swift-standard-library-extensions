@@ -19,6 +19,9 @@ extension Dictionary {
     public func mapKeys<E: Swift.Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey
     ) throws(E) -> [NewKey: Value] {
+        // Four-part template present below per [DOC-045]; rule's single-line
+        // regex can't verify multi-line adjacency, so opt out here.
+        // swiftlint:disable:next workaround_marker_present
         // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
         // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
         // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`
@@ -45,6 +48,9 @@ extension Dictionary {
     public func compactMapKeys<E: Swift.Error, NewKey: Hashable>(
         _ transform: (Key) throws(E) -> NewKey?
     ) throws(E) -> [NewKey: Value] {
+        // Four-part template present below per [DOC-045]; rule's single-line
+        // regex can't verify multi-line adjacency, so opt out here.
+        // swiftlint:disable:next workaround_marker_present
         // WORKAROUND: Manual loop instead of `reduce(into:)` with typed throws
         // WHY: stdlib `reduce(into:)` does not support typed throws (`throws(E)`)
         // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(into:)`

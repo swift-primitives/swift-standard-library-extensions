@@ -133,10 +133,10 @@ extension Result where Success: Copyable {
 extension Result where Success: Copyable {
     /// Creates a result from a typed-throws closure.
     ///
-    /// Unlike `init(catching:)` constrained to `Failure == any Error`, this
-    /// initializer preserves the concrete error type through typed throws.
-    /// Inside this initializer, `catch` binds `error` as `Failure` (typed),
-    /// not `any Error`.
+    /// Unlike stdlib's `init(catching:)` — constrained to `Failure` being the
+    /// untyped `Error` existential — this initializer preserves the concrete
+    /// error type through typed throws. Inside this initializer, `catch` binds
+    /// `error` as `Failure` (typed), not the erased `Error` type.
     @inlinable
     public init(catching body: () throws(Failure) -> Success) {
         do throws(Failure) {
