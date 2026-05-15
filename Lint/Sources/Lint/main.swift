@@ -11,13 +11,13 @@
 
 internal import Linter
 internal import Linter_Primitives_Rules
-// `Linter_Rule_Naming` must be directly imported so the
+// `Institute_Linter_Rule_Naming` must be directly imported so the
 // static-member lookup on `.`int public parameter`` (declared in
 // that module) is visible per Swift 6 MemberImportVisibility.
 // Transitive visibility through Linter_Primitives_Rules is
 // insufficient — the rule's declaring module must be in the file's
 // import set.
-internal import Linter_Rule_Naming
+internal import Institute_Linter_Rule_Naming
 
 // Tier-0 stdlib-boundary opt-out per [IMPL-010]: this package sits at
 // the bottom of the dependency graph (zero primitive deps). The typed

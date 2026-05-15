@@ -37,7 +37,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Linter", package: "swift-linter"),
                 .product(name: "Linter Primitives Rules", package: "swift-primitives-linter-rules"),
-                .product(name: "Linter Rule Naming", package: "swift-institute-linter-rules"),
+                .product(name: "Institute Linter Rule Naming", package: "swift-institute-linter-rules"),
             ]
         ),
     ],
