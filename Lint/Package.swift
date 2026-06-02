@@ -27,9 +27,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../../swift-foundations/swift-linter"),
-        .package(path: "../../../swift-foundations/swift-institute-linter-rules"),
-        .package(path: "../../swift-primitives-linter-rules"),
+        .package(url: "https://github.com/swift-foundations/swift-linter.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-institute-linter-rules.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-primitives-linter-rules.git", branch: "main"),
     ],
     targets: [
         .executableTarget(
