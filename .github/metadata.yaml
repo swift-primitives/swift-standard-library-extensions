@@ -1,5 +1,5 @@
 # .github/metadata.yaml
-description: "Standard library extensions for Swift."
+description: "Typed-throws overloads for rethrows-erased stdlib closures, result-builder DSLs for collection types, and safe-indexing accessors for Swift."
 topics:
   - primitives
   - data-structures
