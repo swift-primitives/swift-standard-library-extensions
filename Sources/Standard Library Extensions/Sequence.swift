@@ -16,9 +16,6 @@ extension Sequence {
     /// ```
     @inlinable
     public func count<E: Swift.Error>(where predicate: (Element) throws(E) -> Bool) throws(E) -> Int {
-        // Four-part template present below per [DOC-045]; rule's single-line
-        // regex can't verify multi-line adjacency, so opt out here.
-        // swiftlint:disable:next workaround_marker_present
         // WORKAROUND: Manual loop instead of `reduce(_:_:)` with typed throws
         // WHY: stdlib `reduce(_:_:)` does not support typed throws (`throws(E)`)
         // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `reduce(_:_:)`
