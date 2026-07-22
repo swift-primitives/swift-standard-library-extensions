@@ -5,11 +5,11 @@
     @TitleHeading("Swift Primitives")
 }
 
-Targeted extensions to the Swift standard library: typed-throws overloads, result-builder DSLs for collection types, safe-indexing accessors, and isolation-preserving cancellation handlers.
+Targeted extensions to the Swift standard library: typed-throws overloads, result-builder DSLs for collection types, safe-indexing accessors, and pre-Swift-6.4-compiler isolation-preserving cancellation-handler compatibility.
 
 ## Overview
 
-The standard library declares its closure-based APIs as `rethrows`, which erases the closure's typed error. This package re-exposes the same operations with `throws(E)` so consumers can retain typed-error guarantees end-to-end. It also adds result-builder support to the standard collection types, safe variants of indexing operations, and a `nonisolated(nonsending)` overload of `withTaskCancellationHandler`.
+The standard library declares its closure-based APIs as `rethrows`, which erases the closure's typed error. This package re-exposes the same operations with `throws(E)` so consumers can retain typed-error guarantees end-to-end. It also adds result-builder support to the standard collection types, safe variants of indexing operations, and a `nonisolated(nonsending)` compatibility overload of `withTaskCancellationHandler` on compilers before Swift 6.4. Swift 6.4 and later compilers provide that cancellation-handler surface in the standard library.
 
 The package is Foundation-free and Embedded-compatible.
 

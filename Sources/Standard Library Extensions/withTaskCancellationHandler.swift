@@ -3,20 +3,22 @@
 //
 // nonisolated(nonsending) overload for _Concurrency.withTaskCancellationHandler.
 //
-// The standard library's withTaskCancellationHandler is not yet nonisolated(nonsending),
-// which can introduce unnecessary suspension points. This overload preserves
-// the caller's isolation context.
+// Before the Swift 6.4 compiler, the standard library's
+// withTaskCancellationHandler is not nonisolated(nonsending), which can
+// introduce unnecessary suspension points. This overload preserves the caller's
+// isolation context on those compilers.
 //
 // See: https://forums.swift.org/t/pre-pitch-updating-with-checked-unsafe-continuation-to-support-typed-throws-and-perhaps-nonisolated-nonsending/84770
 
-#if !hasFeature(Embedded)
+#if compiler(<6.4) && !hasFeature(Embedded)
 
     /// Executes an async operation with a cancellation handler, preserving the caller's
     /// isolation context.
     ///
-    /// Unlike the standard library version, this overload is `nonisolated(nonsending)`,
-    /// meaning neither the operation nor the cancellation check introduces an
-    /// unnecessary executor hop. Uses typed throws rather than `rethrows`.
+    /// Unlike the standard library before the Swift 6.4 compiler, this overload is
+    /// `nonisolated(nonsending)`, meaning neither the operation nor the cancellation
+    /// check introduces an unnecessary executor hop. Uses typed throws rather than
+    /// `rethrows`.
     @inlinable
     nonisolated(nonsending) public func withTaskCancellationHandler<T, E: Swift.Error>(
         operation: nonisolated(nonsending) () async throws(E) -> T,

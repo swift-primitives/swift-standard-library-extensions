@@ -4,7 +4,7 @@
 [![Swift Package Index — Swift](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-primitives%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/swift-primitives/swift-standard-library-extensions)
 [![Swift Package Index — Platforms](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-primitives%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/swift-primitives/swift-standard-library-extensions)
 
-Targeted extensions to the Swift standard library: typed-throws overloads for closure-based stdlib APIs, result-builder DSLs for the standard collection types, safe-indexing accessors, and a `nonisolated(nonsending)` overload of `withTaskCancellationHandler`. Foundation-free. Embedded-compatible.
+Targeted extensions to the Swift standard library: typed-throws overloads for closure-based stdlib APIs, result-builder DSLs for the standard collection types, safe-indexing accessors, and a pre-Swift-6.4-compiler `nonisolated(nonsending)` compatibility overload of `withTaskCancellationHandler`. Foundation-free. Embedded-compatible.
 
 ## Quick Start
 
@@ -60,7 +60,7 @@ xs[safe: -1..<2]   // nil — invalid range, no crash
 
 ### `nonisolated(nonsending)` cancellation handler
 
-Standard library's `withTaskCancellationHandler` is not `nonisolated(nonsending)`, which can introduce executor hops. This package's overload preserves the caller's isolation context:
+Before the Swift 6.4 compiler, the standard library's `withTaskCancellationHandler` is not `nonisolated(nonsending)`, which can introduce executor hops. On those compilers, this package's compatibility overload preserves the caller's isolation context. Swift 6.4 and later compilers use the standard library's equivalent overload directly:
 
 ```swift
 let result = try await withTaskCancellationHandler {
