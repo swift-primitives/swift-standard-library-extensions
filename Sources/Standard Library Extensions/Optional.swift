@@ -63,4 +63,36 @@ extension Optional {
         guard let value = self, let otherValue = other else { return nil }
         return (value, otherValue)
     }
+
+    /// Transforms the wrapped value, propagating the transform's typed error.
+    ///
+    /// Behaves exactly like the standard library's `map`, but preserves a typed
+    /// `throws(E)` instead of erasing it, so it can be called from a function
+    /// that itself declares a typed throw.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// enum ConversionError: Swift.Error { case badDate }
+    ///
+    /// func parse(_ raw: String) throws(ConversionError) -> Date { ... }
+    ///
+    /// func convert(_ raw: String?) throws(ConversionError) -> Date? {
+    ///     try raw.map { try parse($0) }   // typed error survives
+    /// }
+    /// ```
+    ///
+    // WORKAROUND: Overload of stdlib `Optional.map` carrying `throws(E)`
+    // WHY: stdlib `map` is `rethrows`, which is the UNTYPED mechanism — it erases
+    //   the closure's error to `any Error`, so `try optional.map { try f($0) }`
+    //   cannot satisfy an enclosing `throws(SomeError)`.
+    // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `map`
+    // TRACKING: https://github.com/swiftlang/swift/issues/68734
+    @inlinable
+    public func map<NewWrapped, E: Swift.Error>(
+        _ transform: (Wrapped) throws(E) -> NewWrapped
+    ) throws(E) -> NewWrapped? {
+        guard let value = self else { return nil }
+        return try transform(value)
+    }
 }
