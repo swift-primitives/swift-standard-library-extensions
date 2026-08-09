@@ -6,7 +6,8 @@ import Testing
 func `unqualified cancellation handler remains unambiguous`() async {
     let value = await withTaskCancellationHandler {
         42
-    } onCancel: {}
+    } onCancel: {
+    }
 
     #expect(value == 42)
 }
