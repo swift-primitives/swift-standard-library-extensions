@@ -82,12 +82,12 @@ extension Optional {
     /// }
     /// ```
     ///
-    // WORKAROUND: Overload of stdlib `Optional.map` carrying `throws(E)`
-    // WHY: stdlib `map` is `rethrows`, which is the UNTYPED mechanism — it erases
-    //   the closure's error to `any Error`, so `try optional.map { try f($0) }`
-    //   cannot satisfy an enclosing `throws(SomeError)`.
-    // WHEN TO REMOVE: When stdlib gains typed-throws overloads of `map`
-    // TRACKING: https://github.com/swiftlang/swift/issues/68734
+    /// - Workaround: This overload of stdlib `Optional.map` carries `throws(E)`.
+    /// The standard library's `map` is `rethrows`, which is the untyped mechanism
+    /// that erases the closure's error to `any Error`. This means `try optional.map { try f($0) }`
+    /// cannot satisfy an enclosing `throws(SomeError)`.
+    /// Once the standard library gains typed-throws overloads of `map`, this can be removed.
+    /// See: https://github.com/swiftlang/swift/issues/68734
     @inlinable
     public func map<NewWrapped, E: Swift.Error>(
         _ transform: (Wrapped) throws(E) -> NewWrapped
