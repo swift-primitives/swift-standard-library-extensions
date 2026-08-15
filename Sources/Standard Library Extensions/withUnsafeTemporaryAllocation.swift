@@ -33,7 +33,8 @@ public func withUnsafeTemporaryAllocation<E: Swift.Error>(
     _ body: (UnsafeMutableRawBufferPointer) throws(E) -> Void
 ) throws(E) {
     var thrown: E? = nil
-    unsafe Swift.withUnsafeTemporaryAllocation(byteCount: byteCount, alignment: alignment) { buffer in
+    unsafe Swift.withUnsafeTemporaryAllocation(byteCount: byteCount, alignment: alignment) {
+        buffer in
         do throws(E) {
             unsafe try body(buffer)
         } catch {
