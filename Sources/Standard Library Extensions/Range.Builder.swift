@@ -129,7 +129,8 @@ extension ClosedRange {
 
         /// Lifts an expression into the builder's component type.
         @inlinable
-        public static func buildExpression(_ expression: ClosedRange<Bound>) -> [ClosedRange<Bound>] {
+        public static func buildExpression(_ expression: ClosedRange<Bound>) -> [ClosedRange<Bound>]
+        {
             [expression]
         }
 
@@ -186,7 +187,8 @@ extension ClosedRange {
 
         /// Resolves an `if`-without-`else` clause to its component or the empty value.
         @inlinable
-        public static func buildOptional(_ component: [ClosedRange<Bound>]?) -> [ClosedRange<Bound>] {
+        public static func buildOptional(_ component: [ClosedRange<Bound>]?) -> [ClosedRange<Bound>]
+        {
             component ?? []
         }
 
@@ -204,7 +206,8 @@ extension ClosedRange {
 
         /// Concatenates the components produced by a `for`-loop.
         @inlinable
-        public static func buildArray(_ components: [[ClosedRange<Bound>]]) -> [ClosedRange<Bound>] {
+        public static func buildArray(_ components: [[ClosedRange<Bound>]]) -> [ClosedRange<Bound>]
+        {
             components.flatMap { $0 }
         }
 

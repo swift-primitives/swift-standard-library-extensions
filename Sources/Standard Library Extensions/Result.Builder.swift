@@ -171,7 +171,8 @@ extension Result where Success: Copyable {
 
             /// Lifts an expression into the builder's component type.
             @inlinable
-            public static func buildExpression(_ expression: Success) -> Result<[Success], Failure> {
+            public static func buildExpression(_ expression: Success) -> Result<[Success], Failure>
+            {
                 .success([expression])
             }
 
