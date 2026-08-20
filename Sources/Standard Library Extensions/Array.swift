@@ -114,7 +114,7 @@ extension Array {
     public func withUnsafeBufferPointer<T, E: Swift.Error>(
         body: (UnsafeBufferPointer<Element>) throws(E) -> T
     ) throws(E) -> T {
-        let result: Result<T, E> = unsafe self.withUnsafeBufferPointer { buffer in
+        let result: Result<T, E> = self.withUnsafeBufferPointer { buffer in
             do throws(E) {
                 return .success(try unsafe body(buffer))
             } catch {
@@ -138,7 +138,7 @@ extension Array {
         body: (inout UnsafeMutableBufferPointer<Element>) throws(E) -> T
     ) throws(E) -> T {
         var result: Result<T, E>?
-        unsafe self.withUnsafeMutableBufferPointer { buffer in
+        self.withUnsafeMutableBufferPointer { buffer in
             do throws(E) {
                 result = .success(try unsafe body(&buffer))
             } catch {

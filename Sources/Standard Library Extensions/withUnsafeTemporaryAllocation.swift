@@ -14,7 +14,7 @@ public func withUnsafeTemporaryAllocation<T, E: Swift.Error>(
     _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> Void
 ) throws(E) {
     var thrown: E? = nil
-    unsafe Swift.withUnsafeTemporaryAllocation(of: type, capacity: capacity) { buffer in
+    Swift.withUnsafeTemporaryAllocation(of: type, capacity: capacity) { buffer in
         do throws(E) {
             unsafe try body(buffer)
         } catch {
@@ -33,7 +33,7 @@ public func withUnsafeTemporaryAllocation<E: Swift.Error>(
     _ body: (UnsafeMutableRawBufferPointer) throws(E) -> Void
 ) throws(E) {
     var thrown: E? = nil
-    unsafe Swift.withUnsafeTemporaryAllocation(byteCount: byteCount, alignment: alignment) {
+    Swift.withUnsafeTemporaryAllocation(byteCount: byteCount, alignment: alignment) {
         buffer in
         do throws(E) {
             unsafe try body(buffer)
@@ -53,7 +53,7 @@ public func withUnsafeTemporaryAllocation<R, E: Swift.Error>(
     alignment: Int,
     _ body: (UnsafeMutableRawBufferPointer) throws(E) -> R
 ) throws(E) -> R {
-    let result: Result<R, E> = unsafe Swift.withUnsafeTemporaryAllocation(
+    let result: Result<R, E> = Swift.withUnsafeTemporaryAllocation(
         byteCount: byteCount,
         alignment: alignment
     ) { buffer in
@@ -73,7 +73,7 @@ public func withUnsafeTemporaryAllocation<T, R, E: Swift.Error>(
     capacity: Int,
     _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R
 ) throws(E) -> R {
-    let result: Result<R, E> = unsafe Swift.withUnsafeTemporaryAllocation(
+    let result: Result<R, E> = Swift.withUnsafeTemporaryAllocation(
         of: type,
         capacity: capacity
     ) { buffer in

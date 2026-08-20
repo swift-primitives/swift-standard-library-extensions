@@ -15,7 +15,7 @@ public func withUnsafePointer<T, R, E: Swift.Error>(
     _ body: (UnsafePointer<T>) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafePointer(to: value) { ptr in
+    let result: R? = Swift.withUnsafePointer(to: value) { ptr in
         do throws(E) {
             return try unsafe body(ptr)
         } catch {
@@ -37,7 +37,7 @@ public func withUnsafePointer<T, R, E: Swift.Error>(
     _ body: (UnsafePointer<T>) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafePointer(to: &value) { ptr in
+    let result: R? = Swift.withUnsafePointer(to: &value) { ptr in
         do throws(E) {
             return try unsafe body(ptr)
         } catch {
@@ -59,7 +59,7 @@ public func withUnsafeMutablePointer<T, R, E: Swift.Error>(
     _ body: (UnsafeMutablePointer<T>) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafeMutablePointer(to: &value) { ptr in
+    let result: R? = Swift.withUnsafeMutablePointer(to: &value) { ptr in
         do throws(E) {
             return try unsafe body(ptr)
         } catch {
@@ -81,7 +81,7 @@ public func withUnsafeBytes<T, R, E: Swift.Error>(
     _ body: (UnsafeRawBufferPointer) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafeBytes(of: value) { bytes in
+    let result: R? = Swift.withUnsafeBytes(of: value) { bytes in
         do throws(E) {
             return try unsafe body(bytes)
         } catch {
@@ -103,7 +103,7 @@ public func withUnsafeBytes<T, R, E: Swift.Error>(
     _ body: (UnsafeRawBufferPointer) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafeBytes(of: &value) { bytes in
+    let result: R? = Swift.withUnsafeBytes(of: &value) { bytes in
         do throws(E) {
             return try unsafe body(bytes)
         } catch {
@@ -125,7 +125,7 @@ public func withUnsafeMutableBytes<T, R, E: Swift.Error>(
     _ body: (UnsafeMutableRawBufferPointer) throws(E) -> R
 ) throws(E) -> R {
     var thrown: E? = nil
-    let result: R? = unsafe Swift.withUnsafeMutableBytes(of: &value) { bytes in
+    let result: R? = Swift.withUnsafeMutableBytes(of: &value) { bytes in
         do throws(E) {
             return try unsafe body(bytes)
         } catch {

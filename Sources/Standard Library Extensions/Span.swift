@@ -19,7 +19,7 @@ extension Swift.Span where Element: Copyable {
         _ body: (UnsafeBufferPointer<Element>) throws(E) -> R
     ) throws(E) -> R {
         var thrown: E? = nil
-        let result: R? = unsafe self.withUnsafeBufferPointer {
+        let result: R? = self.withUnsafeBufferPointer {
             (buffer: UnsafeBufferPointer<Element>) -> R? in
             do throws(E) {
                 return try unsafe body(buffer)
@@ -43,7 +43,7 @@ extension Swift.MutableSpan where Element: Copyable {
         _ body: (UnsafeBufferPointer<Element>) throws(E) -> R
     ) throws(E) -> R {
         var thrown: E? = nil
-        let result: R? = unsafe self.withUnsafeBufferPointer {
+        let result: R? = self.withUnsafeBufferPointer {
             (buffer: UnsafeBufferPointer<Element>) -> R? in
             do throws(E) {
                 return try unsafe body(buffer)
@@ -64,7 +64,7 @@ extension Swift.MutableSpan where Element: Copyable {
         _ body: (UnsafeMutableBufferPointer<Element>) throws(E) -> R
     ) throws(E) -> R {
         var thrown: E? = nil
-        let result: R? = unsafe self.withUnsafeMutableBufferPointer {
+        let result: R? = self.withUnsafeMutableBufferPointer {
             (buffer: UnsafeMutableBufferPointer<Element>) -> R? in
             do throws(E) {
                 return try unsafe body(buffer)
