@@ -5,8 +5,6 @@ import Testing
 @Suite
 struct `Range - Extensions` {
 
-    // MARK: - Range.overlap
-
     @Test
     func `overlap with intersecting ranges returns intersection`() {
         let a = 0..<10
@@ -60,8 +58,6 @@ struct `Range - Extensions` {
         #expect(a.overlap(b) == b.overlap(a))
     }
 
-    // MARK: - Range.clamped
-
     @Test
     func `clamped to larger range returns self`() {
         let range = 5..<15
@@ -97,8 +93,6 @@ struct `Range - Extensions` {
 
         #expect(result == nil)
     }
-
-    // MARK: - Range.split
 
     @Test(arguments: [
         (0..<10, 5, (0..<5, 5..<10)),
@@ -143,13 +137,10 @@ struct `Range - Extensions` {
         let range = 0..<100
         let result = range.split(at: 42)!
 
-        // Lower ends where upper begins
         #expect(result.lower.upperBound == result.upper.lowerBound)
 
-        // No overlap
         #expect(result.lower.upperBound <= result.upper.lowerBound)
 
-        // Union would cover original (if we could union ranges)
         #expect(result.lower.lowerBound == range.lowerBound)
         #expect(result.upper.upperBound == range.upperBound)
     }

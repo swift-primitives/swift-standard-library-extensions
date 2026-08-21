@@ -1,18 +1,5 @@
-// Span.swift
-// swift-standard-library-extensions
-//
-// Typed-throws overloads for Span and MutableSpan closure-based access.
-//
-// Note: Span.withUnsafeBytes already has typed throws in stdlib (requires BitwiseCopyable).
-// We only add typed throws for withUnsafeBufferPointer which uses rethrows in stdlib.
-
-// MARK: - Span
-
 extension Swift.Span where Element: Copyable {
-    /// Typed-throws overload for `withUnsafeBufferPointer`.
-    ///
-    /// The stdlib version uses `rethrows` which erases error types.
-    /// This overload preserves typed throws.
+
     @inlinable
     @_disfavoredOverload
     public func withUnsafeBufferPointer<R, E: Swift.Error>(
@@ -33,10 +20,8 @@ extension Swift.Span where Element: Copyable {
     }
 }
 
-// MARK: - MutableSpan
-
 extension Swift.MutableSpan where Element: Copyable {
-    /// Typed-throws overload for `withUnsafeBufferPointer`.
+
     @inlinable
     @_disfavoredOverload
     public func withUnsafeBufferPointer<R, E: Swift.Error>(
@@ -56,7 +41,6 @@ extension Swift.MutableSpan where Element: Copyable {
         return unsafe result.unsafelyUnwrapped
     }
 
-    /// Typed-throws overload for `withUnsafeMutableBufferPointer`.
     @inlinable
     @_disfavoredOverload
     @_lifetime(self: copy self)

@@ -1,16 +1,9 @@
-// Comparable Tests.swift
-// swift-standards
-//
-// Tests for Comparable extensions
-
 import Testing
 
 @testable import Standard_Library_Extensions
 
 @Suite
 struct `Comparable Clamping` {
-
-    // MARK: - Values within range
 
     @Test
     func `Clamping value within range returns value`() {
@@ -27,8 +20,6 @@ struct `Comparable Clamping` {
         #expect(5.clamped(to: -5...5) == 5)
     }
 
-    // MARK: - Values outside range
-
     @Test
     func `Clamping value above range returns upper bound`() {
         #expect(15.clamped(to: 0...10) == 10)
@@ -42,8 +33,6 @@ struct `Comparable Clamping` {
         #expect((-100).clamped(to: 0...10) == 0)
         #expect((-1000).clamped(to: 0...10) == 0)
     }
-
-    // MARK: - Different numeric types
 
     @Test
     func `Clamping with Double`() {
@@ -73,8 +62,6 @@ struct `Comparable Clamping` {
         #expect(Int16(-500).clamped(to: -100...100) == -100)
     }
 
-    // MARK: - Single value range
-
     @Test
     func `Clamping to single value range`() {
         #expect(5.clamped(to: 7...7) == 7)
@@ -82,16 +69,12 @@ struct `Comparable Clamping` {
         #expect(0.clamped(to: 7...7) == 7)
     }
 
-    // MARK: - String clamping (lexicographic order)
-
     @Test
     func `Clamping strings lexicographically`() {
         #expect("dog".clamped(to: "cat"..."zebra") == "dog")
         #expect("apple".clamped(to: "cat"..."zebra") == "cat")
         #expect("zoo".clamped(to: "cat"..."zebra") == "zebra")
     }
-
-    // MARK: - Character clamping
 
     @Test
     func `Clamping characters`() {
@@ -101,11 +84,9 @@ struct `Comparable Clamping` {
         #expect(Character("~").clamped(to: "a"..."z") == "z")
     }
 
-    // MARK: - Category theory properties
-
     @Test
     func `Order preservation - monotonicity`() {
-        // ∀x,y ∈ T: x ≤ y ⟹ clamp(x) ≤ clamp(y)
+
         let range = 0...10
 
         let x = 3
@@ -113,7 +94,6 @@ struct `Comparable Clamping` {
         #expect(x <= y)
         #expect(x.clamped(to: range) <= y.clamped(to: range))
 
-        // Test with values outside range
         let a = -5
         let b = 15
         #expect(a <= b)
@@ -122,7 +102,7 @@ struct `Comparable Clamping` {
 
     @Test
     func `Codomain restriction property`() {
-        // ∀x ∈ T: a ≤ clamp(x) ≤ b
+
         let range = 0...10
 
         for value in [-100, -10, -1, 0, 5, 10, 11, 100] {
@@ -134,7 +114,7 @@ struct `Comparable Clamping` {
 
     @Test
     func `Identity morphism for values in range`() {
-        // ∀x ∈ [a,b]: clamp(x) = x
+
         let range = 0...10
 
         for value in 0...10 {
@@ -144,7 +124,7 @@ struct `Comparable Clamping` {
 
     @Test
     func `Idempotence property`() {
-        // clamp(clamp(x)) = clamp(x)
+
         let range = 0...10
 
         for value in [-100, -10, 0, 5, 10, 100] {
@@ -153,8 +133,6 @@ struct `Comparable Clamping` {
             #expect(onceClamped == twiceClamped)
         }
     }
-
-    // MARK: - Edge cases
 
     @Test
     func `Clamping extreme values`() {

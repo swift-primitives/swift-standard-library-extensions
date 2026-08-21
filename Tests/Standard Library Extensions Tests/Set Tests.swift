@@ -5,8 +5,6 @@ import Testing
 @Suite
 struct `Set - Extensions` {
 
-    // MARK: - partition(where:)
-
     @Test
     func `partition splits set correctly`() {
         let numbers: Set = [1, 2, 3, 4, 5, 6]
@@ -48,14 +46,10 @@ struct `Set - Extensions` {
         let numbers: Set = [1, 2, 3, 4, 5]
         let (satisfying, failing) = numbers.partition(where: { $0 > 3 })
 
-        // Disjoint: intersection is empty
         #expect(satisfying.isDisjoint(with: failing))
 
-        // Union equals original
         #expect(satisfying.union(failing) == numbers)
     }
-
-    // MARK: - subsets(ofSize:)
 
     @Test
     func `subsets of size 0 returns empty set`() {
@@ -115,12 +109,9 @@ struct `Set - Extensions` {
     func `subsets count matches binomial coefficient`() {
         let set: Set = [1, 2, 3, 4]
 
-        // C(4,2) = 6
         let result = set.subsets(ofSize: 2)
         #expect(result.count == 6)
     }
-
-    // MARK: - cartesian.product
 
     @Test
     func `cartesian product produces all pairs`() {
@@ -153,8 +144,6 @@ struct `Set - Extensions` {
         #expect(result.count == a.count * b.count)
     }
 
-    // MARK: - cartesian.square
-
     @Test
     func `cartesian square includes all pairs from same set`() {
         let set: Set = [1, 2, 3]
@@ -175,42 +164,3 @@ struct `Set - Extensions` {
         #expect(result.count == set.count * set.count)
     }
 }
-
-//// MARK: - Performance Tests
-//
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Set - Performance` {
-//
-//        @Test(.timed(threshold: .milliseconds(15), maxAllocations: 10_000_000))
-//        func `partition 10k elements`() {
-//            let numbers: Set = Set(1...10_000)
-//            _ = numbers.partition(where: { $0.isMultiple(of: 2) })
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(2), maxAllocations: 2_000_000))
-//        func `subsets of size 2 from 20 elements`() {
-//            let set: Set = Set(1...20)
-//            _ = set.subsets(ofSize: 2)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(100), maxAllocations: 2_000_000))
-//        func `subsets of size 5 from 15 elements`() {
-//            let set: Set = Set(1...15)
-//            _ = set.subsets(ofSize: 5)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50), maxAllocations: 500_000))
-//        func `cartesian product 100x100`() {
-//            let a: Set = Set(1...100)
-//            let b: Set = Set(1...100)
-//            _ = a.cartesian.product(b)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(20), maxAllocations: 2_000_000))
-//        func `cartesian square 100 elements`() {
-//            let set: Set = Set(1...100)
-//            _ = set.cartesian.square()
-//        }
-//    }
-// }

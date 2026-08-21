@@ -1,21 +1,5 @@
-// Set.swift
-// swift-standard-library-extensions
-//
-// Extensions for Swift standard library Set
-
 extension Set {
-    /// Splits the set into two disjoint sets based on a predicate.
-    ///
-    /// Returns a tuple where the first set contains elements that satisfy the predicate,
-    /// and the second set contains elements that don't. Use this to categorize set elements.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let numbers: Set = [1, 2, 3, 4, 5, 6]
-    /// let (evens, odds) = numbers.partition(where: { $0.isMultiple(of: 2) })
-    /// // evens: [2, 4, 6], odds: [1, 3, 5]
-    /// ```
+
     @inlinable
     public func partition(
         where predicate: (Element) -> Bool
@@ -34,18 +18,6 @@ extension Set {
         return (satisfying, failing)
     }
 
-    /// Returns all possible subsets of the specified size.
-    ///
-    /// Generates all combinations of k elements from the set. Returns an empty set for invalid sizes (k < 0 or k > count).
-    /// Use this for combinatorial operations and subset analysis.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let set: Set = [1, 2, 3]
-    /// set.subsets(ofSize: 2)  // [[1, 2], [1, 3], [2, 3]]
-    /// set.subsets(ofSize: 0)  // [[]]
-    /// ```
     @inlinable
     public func subsets(ofSize k: Int) -> Set<Set<Element>> {
         guard k >= 0 else { return [] }
@@ -79,13 +51,11 @@ extension Set {
         return result
     }
 
-    /// Namespace for Cartesian operations on this set.
     @inlinable
     public var cartesian: Cartesian {
         Cartesian(base: self)
     }
 
-    /// Namespace for Cartesian operations on a Set.
     public struct Cartesian {
         @usableFromInline
         internal let base: Set<Element>
@@ -98,18 +68,7 @@ extension Set {
 }
 
 extension Set.Cartesian {
-    /// Returns all ordered pairs combining elements from both sets.
-    ///
-    /// Generates all combinations where the first element comes from this set and the second from the other set.
-    /// Use this to create all possible pairings between two sets.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let a: Set = [1, 2]
-    /// let b: Set = ["x", "y"]
-    /// a.cartesian.product(b)  // [(1, "x"), (1, "y"), (2, "x"), (2, "y")]
-    /// ```
+
     @inlinable
     public func product<Other>(_ other: Set<Other>) -> [(Element, Other)] {
         var result: [(Element, Other)] = []
@@ -124,17 +83,6 @@ extension Set.Cartesian {
         return result
     }
 
-    /// Returns all ordered pairs combining elements from the set with itself.
-    ///
-    /// Equivalent to `cartesian.product(self)`. Generates all possible ordered pairs including pairs like (1, 1).
-    /// Use this to generate all possible pairings within a single set.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let set: Set = [1, 2, 3]
-    /// set.cartesian.square()  // [(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)]
-    /// ```
     @inlinable
     public func square() -> [(Element, Element)] {
         product(base)

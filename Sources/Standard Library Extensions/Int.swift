@@ -1,17 +1,5 @@
-// Int.swift
-// swift-standard-library-extensions
-//
-// Extensions for Swift standard library Int
-
 extension Int {
-    /// Creates an integer from a boolean value (1 for `true`, 0 for `false`).
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// Int(true)   // 1
-    /// Int(false)  // 0
-    /// ```
+
     @inlinable
     public init(_ bool: Bool) {
         self = bool ? 1 : 0

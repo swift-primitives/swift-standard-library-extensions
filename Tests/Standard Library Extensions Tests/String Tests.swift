@@ -2,16 +2,6 @@ import Testing
 
 @testable import Standard_Library_Extensions
 
-// Tests for StringProtocol utilities that remain in swift-standard-library-extensions.
-// Case-formatting tests (String.Case.Insensitive, String.caseInsensitive, formatted(as:))
-// have been moved to swift-format-primitives/Tests/Format Primitives Tests/.
-// String.ASCII.LineEnding tests have been moved to swift-incits-4-1986.
-// Percent encoding tests have been moved to swift-rfc-3986.
-// Hex encoding tests have been moved to swift-rfc-4648.
-// Base64 encoding tests have been moved to swift-rfc-4648.
-
-// MARK: - StringProtocol.range(of:)
-
 @Suite
 struct `StringProtocol.range(of:) - Basic Matching` {
 
@@ -98,7 +88,7 @@ struct `StringProtocol.range(of:) - Multiple Occurrences` {
         let result = "test test test".range(of: "test")
         #expect(result != nil)
         if let range = result {
-            // Should be the first occurrence
+
             #expect(range.lowerBound == "test test test".startIndex)
         }
     }
@@ -150,7 +140,6 @@ struct `StringProtocol.range(of:) - Substring Support` {
         let end = large.index(start, offsetBy: 11)
         let sub = large[start..<end]
 
-        // Substring type is preserved
         #expect(type(of: sub) == Substring.self)
 
         let result = sub.range(of: "World")
@@ -222,8 +211,7 @@ struct `StringProtocol.range(of:) - Backtracking` {
 
     @Test
     func `Partial prefix match requires backtrack`() {
-        // "aab" appears at offset 1; naive scan must not commit after matching
-        // the first two 'a's at offset 0.
+
         let haystack = "aaab"
         let result = haystack.range(of: "aab")
         #expect(result != nil)
@@ -235,7 +223,7 @@ struct `StringProtocol.range(of:) - Backtracking` {
 
     @Test
     func `Overlapping prefix returns first full match`() {
-        // "abab" in "ababab": first full match starts at offset 0.
+
         let haystack = "ababab"
         let result = haystack.range(of: "abab")
         #expect(result != nil)
@@ -261,16 +249,13 @@ struct `StringProtocol.range(of:) - Byte-Literal Semantics` {
 
     @Test
     func `Precomposed does not match decomposed`() {
-        // "café" with precomposed é (U+00E9) vs "cafe" + combining acute
-        // (U+0065 U+0301). These are canonically equivalent under Unicode
-        // normalization, but range(of:) matches bytes, not graphemes.
+
         let precomposed = "caf\u{00E9}"
         let decomposed = "cafe\u{0301}"
 
         #expect(precomposed.range(of: decomposed) == nil)
         #expect(decomposed.range(of: precomposed) == nil)
 
-        // Self-matches still succeed: bytes are byte-equal to themselves.
         #expect(precomposed.range(of: precomposed) != nil)
         #expect(decomposed.range(of: decomposed) != nil)
     }

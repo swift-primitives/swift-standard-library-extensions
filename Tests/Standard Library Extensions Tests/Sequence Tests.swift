@@ -5,8 +5,6 @@ import Testing
 @Suite
 struct `Sequence - Extensions` {
 
-    // MARK: - sum() (AdditiveArithmetic)
-
     @Test(arguments: [
         ([1, 2, 3, 4, 5], 15),
         ([10, 20, 30], 60),
@@ -29,8 +27,6 @@ struct `Sequence - Extensions` {
         let empty: [Int] = []
         #expect(empty.sum() == 0)
     }
-
-    // MARK: - product() (Numeric)
 
     @Test(arguments: [
         ([1, 2, 3, 4, 5], 120),
@@ -61,8 +57,6 @@ struct `Sequence - Extensions` {
         #expect(numbers.product() == 10.0)
     }
 
-    // MARK: - mean() (BinaryInteger)
-
     @Test(arguments: [
         ([1, 2, 3, 4, 5], 3),
         ([10, 20, 30], 20),
@@ -79,8 +73,6 @@ struct `Sequence - Extensions` {
         let empty: [Int] = []
         #expect(empty.mean() == nil)
     }
-
-    // MARK: - mean() (BinaryFloatingPoint)
 
     @Test
     func `mean returns correct average for doubles`() {
@@ -100,20 +92,16 @@ struct `Sequence - Extensions` {
         #expect(empty.mean() == nil)
     }
 
-    // MARK: - count(where:)
-
     @Test(arguments: [
-        ([1, 2, 3, 4, 5, 6], 3),  // 3 even numbers
-        ([1, 3, 5, 7], 0),  // 0 even numbers
-        ([2, 4, 6, 8], 4),  // all even
-        ([], 0),  // empty
+        ([1, 2, 3, 4, 5, 6], 3),
+        ([1, 3, 5, 7], 0),
+        ([2, 4, 6, 8], 4),
+        ([], 0),
     ])
     func `count where predicate counts matching elements`(testCase: ([Int], Int)) {
         let (array, expected) = testCase
         #expect(array.count(where: { $0.isMultiple(of: 2) }) == expected)
     }
-
-    // MARK: - frequencies()
 
     @Test
     func `frequencies counts element occurrences`() {
@@ -152,8 +140,6 @@ struct `Sequence - Extensions` {
         #expect(result.values.allSatisfy { $0 == 1 })
     }
 
-    // MARK: - isSorted()
-
     @Test(arguments: [
         [1, 2, 3, 4, 5],
         [1, 1, 2, 3, 3],
@@ -173,8 +159,6 @@ struct `Sequence - Extensions` {
         #expect(!array.isSorted())
     }
 
-    // MARK: - isSorted(by:)
-
     @Test
     func `isSorted by descending order`() {
         let numbers = [5, 4, 3, 2, 1]
@@ -192,8 +176,6 @@ struct `Sequence - Extensions` {
         let numbers = [1, 2, 3, 4, 5]
         #expect(!numbers.isSorted(by: >))
     }
-
-    // MARK: - max(count:)
 
     @Test
     func `max count returns N largest elements`() {
@@ -223,8 +205,6 @@ struct `Sequence - Extensions` {
         let empty: [Int] = []
         #expect(empty.max(count: 5).isEmpty)
     }
-
-    // MARK: - min(count:)
 
     @Test
     func `min count returns N smallest elements`() {

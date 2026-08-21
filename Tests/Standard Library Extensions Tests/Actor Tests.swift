@@ -2,8 +2,6 @@ import Testing
 
 @testable import Standard_Library_Extensions
 
-// MARK: - Sendable Fixtures
-
 actor Counter {
     var count = 0
 
@@ -13,21 +11,17 @@ actor Counter {
     enum Failure: Swift.Error { case belowZero }
 
     func decrement() throws(Failure) {
-        // `count` is an Int counter, not a Collection (Int has no `isEmpty`).
-        // swiftlint:disable:next empty_count
+
         guard count > 0 else { throw .belowZero }
         count -= 1
     }
 }
 
-/// A second actor that can observe a Counter.
 actor Observer {
     func read(_ counter: Counter) async -> Int {
         await counter.value()
     }
 }
-
-// MARK: - Non-Sendable Fixtures
 
 final class Box {
     var value: Int
@@ -38,8 +32,6 @@ actor Holder {
     let stored = Box(42)
     func getStored() -> Box { stored }
 }
-
-// MARK: - ~Copyable Fixtures
 
 struct UniqueResource: ~Copyable, Sendable {
     let id: Int
@@ -70,8 +62,6 @@ actor ResourceFactory {
         return UniqueResource(id: counter)
     }
 }
-
-// MARK: - Sync run
 
 @Suite
 struct `Actor - run sync` {
@@ -138,8 +128,6 @@ struct `Actor - run sync` {
     }
 }
 
-// MARK: - Async run
-
 @Suite
 struct `Actor - run async` {
 
@@ -152,7 +140,6 @@ struct `Actor - run async` {
             counter.increment()
             counter.increment()
 
-            // await in body → async overload selected
             let observed = await observer.read(counter)
             #expect(observed == 2)
         }
@@ -178,15 +165,13 @@ struct `Actor - run async` {
 
         await #expect(throws: Counter.Failure.belowZero) {
             try await counter.run { counter in
-                // Force async overload via cross-actor call
+
                 _ = await observer.read(counter)
                 try counter.decrement()
             }
         }
     }
 }
-
-// MARK: - Sending return
 
 @Suite
 struct `Actor - sending return` {
@@ -226,19 +211,7 @@ struct `Actor - sending return` {
         #expect(boxes[3].value == 3)
     }
 
-    // NOTE: The following does NOT compile (correctly):
-    //
-    //   await holder.run { holder in holder.getStored() }
-    //
-    // Error: returning 'holder'-isolated 'holder.getStored' as a
-    //        'sending' result risks causing data races
-    //
-    // The compiler correctly rejects returning values obtained from
-    // actor-isolated methods, because it cannot prove they are
-    // disconnected from the actor's state.
 }
-
-// MARK: - ~Copyable return (sync)
 
 @Suite
 struct `Actor - noncopyable sync` {
@@ -270,7 +243,7 @@ struct `Actor - noncopyable sync` {
         let factory = ResourceFactory()
 
         await #expect(throws: ResourceFactory.Failure.depleted) {
-            // Exhaust the factory
+
             for _ in 0..<6 {
                 _ = try await factory.run { factory in
                     try factory.makeOrFail()
@@ -284,18 +257,16 @@ struct `Actor - noncopyable sync` {
         let factory = ResourceFactory()
 
         let resource = await factory.run { factory in
-            // Discard first two
+
             _ = factory.make()
             _ = factory.make()
-            // Keep third
+
             return factory.make()
         }
 
         #expect(resource.id == 3)
     }
 }
-
-// MARK: - ~Copyable return (async)
 
 @Suite
 struct `Actor - noncopyable async` {

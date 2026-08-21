@@ -5,8 +5,6 @@ import Testing
 @Suite
 struct `ClosedRange - Extensions` {
 
-    // MARK: - ClosedRange.overlap
-
     @Test
     func `overlap with intersecting ranges returns intersection`() {
         let a = 0...10
@@ -44,8 +42,6 @@ struct `ClosedRange - Extensions` {
 
         #expect(a.overlap(b) == b.overlap(a))
     }
-
-    // MARK: - ClosedRange.clamped
 
     @Test
     func `clamped to larger range returns self`() {

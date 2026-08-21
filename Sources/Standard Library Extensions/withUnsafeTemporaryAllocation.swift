@@ -1,11 +1,3 @@
-// withUnsafeTemporaryAllocation.swift
-// swift-standard-library-extensions
-//
-// Typed throws overloads for withUnsafeTemporaryAllocation
-
-// MARK: - Void-returning overloads
-
-/// Typed-throws overload of `Swift.withUnsafeTemporaryAllocation(of:capacity:_:)`.
 @inlinable
 @_disfavoredOverload
 public func withUnsafeTemporaryAllocation<T, E: Swift.Error>(
@@ -24,7 +16,6 @@ public func withUnsafeTemporaryAllocation<T, E: Swift.Error>(
     if let thrown { throw thrown }
 }
 
-/// Typed-throws overload of `Swift.withUnsafeTemporaryAllocation(byteCount:alignment:_:)`.
 @inlinable
 @_disfavoredOverload
 public func withUnsafeTemporaryAllocation<E: Swift.Error>(
@@ -44,9 +35,6 @@ public func withUnsafeTemporaryAllocation<E: Swift.Error>(
     if let thrown { throw thrown }
 }
 
-// MARK: - Result-returning overloads
-
-/// Typed-throws overload of `Swift.withUnsafeTemporaryAllocation(byteCount:alignment:_:)`.
 @inlinable
 public func withUnsafeTemporaryAllocation<R, E: Swift.Error>(
     byteCount: Int,
@@ -66,7 +54,6 @@ public func withUnsafeTemporaryAllocation<R, E: Swift.Error>(
     return try result.get()
 }
 
-/// Typed-throws overload of `Swift.withUnsafeTemporaryAllocation(of:capacity:_:)`.
 @inlinable
 public func withUnsafeTemporaryAllocation<T, R, E: Swift.Error>(
     of type: T.Type,

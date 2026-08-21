@@ -7,6 +7,6 @@ struct `Double - Extensions` {
 
     @Test
     func `Placeholder test`() {
-        // Add tests here
+
     }
 }

@@ -5,8 +5,6 @@ import Testing
 @Suite(.serialized)
 struct `Sequence - Performance` {
 
-    // MARK: - Aggregation Performance
-
     @Test(.timed(threshold: .milliseconds(60)))
     func `sum 100k elements`() {
         let numbers = Array(1...100_000)
@@ -31,8 +29,6 @@ struct `Sequence - Performance` {
         _ = numbers.mean()
     }
 
-    // MARK: - Collection Operations
-
     @Test(.timed(threshold: .milliseconds(50)))
     func `count where 100k elements`() {
         let numbers = Array(1...100_000)
@@ -56,8 +52,6 @@ struct `Sequence - Performance` {
         let numbers = Array((1...100_000).reversed())
         _ = numbers.isSorted()
     }
-
-    // MARK: - max/min count Performance
 
     @Test(.timed(threshold: .milliseconds(120)))
     func `max count 10 from 100k`() {

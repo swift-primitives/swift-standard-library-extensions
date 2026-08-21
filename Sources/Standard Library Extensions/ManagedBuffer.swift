@@ -1,13 +1,5 @@
-// ManagedBuffer.swift
-// swift-standard-library-extensions
-//
-// Typed throws overloads for ManagedBuffer methods.
-
 extension ManagedBuffer {
-    /// Typed throws overload for `withUnsafeMutablePointerToElements`.
-    ///
-    /// The stdlib version uses `rethrows` which erases typed errors.
-    /// This overload preserves the error type using the Result pattern.
+
     @inlinable
     @_disfavoredOverload
     public func withUnsafeMutablePointerToElements<R, E: Swift.Error>(
@@ -23,7 +15,6 @@ extension ManagedBuffer {
         return try result.get()
     }
 
-    /// Typed throws overload for `withUnsafeMutablePointerToHeader`.
     @inlinable
     @_disfavoredOverload
     public func withUnsafeMutablePointerToHeader<R, E: Swift.Error>(
@@ -39,7 +30,6 @@ extension ManagedBuffer {
         return try result.get()
     }
 
-    /// Typed throws overload for `withUnsafeMutablePointers`.
     @inlinable
     @_disfavoredOverload
     public func withUnsafeMutablePointers<R, E: Swift.Error>(

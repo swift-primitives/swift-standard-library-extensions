@@ -25,8 +25,7 @@ let package = Package(
         .target(
             name: "Standard Library Extensions"
         ),
-        // Tests are in a separate nested package (Tests/Package.swift)
-        // to break the circular dependency with swift-testing
+
         .target(
             name: "Standard Library Extensions Test Support",
             dependencies: [
