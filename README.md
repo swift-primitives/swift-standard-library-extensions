@@ -1,9 +1,9 @@
 # Standard Library Extensions
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
-[![Swift Package Index — Swift](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-primitives%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/swift-primitives/swift-standard-library-extensions)
-[![Swift Package Index — Platforms](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-primitives%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/swift-primitives/swift-standard-library-extensions)
-[![CI](https://github.com/swift-primitives/swift-standard-library-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-primitives/swift-standard-library-extensions/actions/workflows/ci.yml)
+[![Swift Package Index — Swift](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-molecules%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/swift-molecules/swift-standard-library-extensions)
+[![Swift Package Index — Platforms](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswift-molecules%2Fswift-standard-library-extensions%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/swift-molecules/swift-standard-library-extensions)
+[![CI](https://github.com/swift-molecules/swift-standard-library-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-molecules/swift-standard-library-extensions/actions/workflows/ci.yml)
 
 Targeted extensions to the Swift standard library: typed-throws overloads for closure-based stdlib APIs, result-builder DSLs for the standard collection types, safe-indexing accessors, and a pre-Swift-6.4-compiler `nonisolated(nonsending)` compatibility overload of `withTaskCancellationHandler`. Foundation-free. Embedded-compatible.
 
@@ -79,7 +79,7 @@ Add to your `Package.swift`:
 ```swift
 dependencies: [
     .package(
-        url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+        url: "https://github.com/swift-molecules/swift-standard-library-extensions.git",
         from: "0.1.0"
     ),
 ]
